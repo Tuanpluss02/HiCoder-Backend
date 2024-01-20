@@ -1,5 +1,6 @@
 package com.stormx.hicoder.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,7 @@ public class Comment {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "comment_likes",

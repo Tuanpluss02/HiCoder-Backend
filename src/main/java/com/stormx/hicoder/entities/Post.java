@@ -1,5 +1,6 @@
 package com.stormx.hicoder.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,13 +21,16 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "post_likes",
