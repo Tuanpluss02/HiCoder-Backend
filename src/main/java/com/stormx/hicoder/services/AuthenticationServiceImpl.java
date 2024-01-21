@@ -7,7 +7,6 @@ import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;
 import com.stormx.hicoder.entities.Token;
 import com.stormx.hicoder.entities.User;
-import com.stormx.hicoder.exceptions.AppException;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.TokenRepository;
 import com.stormx.hicoder.repositories.UserRepository;
@@ -15,7 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,7 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse register(AuthenticationRequest request) {
         String email = request.getEmail();
-        if (repository.existsByEmail(email)) throw new BadRequestException( "Email already exists");
+        if (repository.existsByEmail(email)) throw new BadRequestException("Email already exists");
         String role = request.getRole();
         Role userRole;
         if (role == null || role.isEmpty() || role.equals("USER")) userRole = Role.USER;
@@ -91,7 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             String accessToken = jwtService.generateToken(user, authorities);
             String newRefreshToken = jwtService.generateRefreshToken(user, authorities);
             saveUserToken(user, accessToken);
-            var authResponse = AuthenticationResponse.builder().accessToken(accessToken).userId(user.getId()).username(user.getUsername()).refreshToken(refreshToken).build();
+            var authResponse = AuthenticationResponse.builder().accessToken(accessToken).userId(user.getId()).username(user.getUsername()).refreshToken(newRefreshToken).build();
             new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
         }
 
