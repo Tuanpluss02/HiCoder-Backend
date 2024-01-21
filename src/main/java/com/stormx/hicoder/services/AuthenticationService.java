@@ -8,5 +8,5 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface AuthenticationService {
     public AuthenticationResponse register(AuthenticationRequest request);
     public AuthenticationResponse authenticate(AuthenticationRequest request);
-    public void refreshToken(HttpServletRequest request,HttpServletResponse response );
+    public void refreshToken(HttpServletRequest request,HttpServletResponse response);
 }

@@ -1,29 +1,43 @@
 package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.dto.AuthenticationRequest;
+import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.services.AuthenticationService;
-import com.stormx.hicoder.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+import java.util.List;
 
+@RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
-    @PostMapping("/user/login")
-    public ResponseEntity<?> userLogin(@RequestBody AuthenticationRequest authenticationRequest){
+    @PostMapping("/login")
+    public ResponseEntity<?> userLogin(@Valid @RequestBody AuthenticationRequest authenticationRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
+            throw new ValidationException(errors.getFirst());
+        }
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
     }
-    @PostMapping("/admin/login")
-    public ResponseEntity<?> adminLogin(@RequestBody AuthenticationRequest authenticationRequest){
-        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
-    }
 
+    @PostMapping("/register")
+    public ResponseEntity<?> userRegister(@Valid @RequestBody AuthenticationRequest authenticationRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
+            throw new ValidationException(errors.getFirst());
+        }
+        return ResponseEntity.ok(authenticationService.register(authenticationRequest));
+    }
 }

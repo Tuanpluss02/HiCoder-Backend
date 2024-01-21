@@ -6,11 +6,14 @@ import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;
 import com.stormx.hicoder.entities.Token;
 import com.stormx.hicoder.entities.User;
+import com.stormx.hicoder.exceptions.AppException;
 import com.stormx.hicoder.repositories.TokenRepository;
 import com.stormx.hicoder.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,16 +29,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    @Value("${auth.admin-key}")
+    private String adminKey;
+
     @Override
     public AuthenticationResponse register(AuthenticationRequest request) {
+        String email = request.getEmail();
+        if (repository.existsByEmail(email)) throw new AppException(HttpStatus.BAD_REQUEST, "Email already exists");
         String role = request.getRole();
         Role userRole;
         if (role == null || role.isEmpty() || role.equals("USER")) userRole = Role.USER;
-        else if (role.equals("ADMIN")) userRole = Role.ADMIN;
-        else userRole = Role.USER;
-        User user = User.builder().email(request.getEmail()).password(request.getPassword()).role(userRole).build();
+        else if (role.equals("ADMIN")) {
+            if (request.getAdminKey() == null || request.getAdminKey().isEmpty() || !request.getAdminKey().equals(adminKey))
+                throw new RuntimeException("Invalid admin key");
+            userRole = Role.ADMIN;
+        } else userRole = Role.USER;
+        String username = request.getEmail().split("@")[0];
+        User user = User.builder().username(username).email(request.getEmail()).password(request.getPassword()).role(userRole).build();
         repository.save(user);
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
         String jwtToken = jwtService.generateToken(user, authorities);
         String refreshToken = jwtService.generateRefreshToken(user, authorities);
