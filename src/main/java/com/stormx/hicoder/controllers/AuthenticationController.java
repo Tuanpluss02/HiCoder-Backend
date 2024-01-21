@@ -1,5 +1,6 @@
 package com.stormx.hicoder.controllers;
 
+import com.stormx.hicoder.common.ResponeObject;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.services.AuthenticationService;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +31,7 @@ public class AuthenticationController {
             List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             throw new ValidationException(errors.getFirst());
         }
-        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
+        return ResponseEntity.ok(new ResponeObject(HttpStatus.OK,"Login successfully", authenticationService.authenticate(authenticationRequest)));
     }
 
     @PostMapping("/register")
@@ -38,6 +40,6 @@ public class AuthenticationController {
             List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             throw new ValidationException(errors.getFirst());
         }
-        return ResponseEntity.ok(authenticationService.register(authenticationRequest));
+        return ResponseEntity.ok(new ResponeObject(HttpStatus.OK,"Register successfully", authenticationService.register(authenticationRequest)));
     }
 }
