@@ -1,5 +1,9 @@
 package com.stormx.hicoder.services;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stormx.hicoder.common.Role;
 import com.stormx.hicoder.common.TokenType;
 import com.stormx.hicoder.dto.AuthenticationRequest;
@@ -13,13 +17,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collection;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Service
 @RequiredArgsConstructor
@@ -71,14 +79,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
-//        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-//        final String refreshToken;
-//        final String userEmail;
-//        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-//            return;
-//        }
-//        refreshToken = authHeader.substring(7);
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response)  throws IOException {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return;
+        }
+        String refreshToken = authorizationHeader.substring("Bearer ".length());
+        String username = jwtService.getUsernameFromToken(refreshToken);
+        User user = repository.findByUsername(username).orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+        boolean isRefreshTokenValid = jwtService.isRefreshTokenValid(refreshToken, user);
+        if (isRefreshTokenValid){
+            revokeAllUserTokens(user);
+            Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
+            String accessToken = jwtService.generateToken(user, authorities);
+            String newRefreshToken = jwtService.generateRefreshToken(user, authorities);
+            saveUserToken(user, accessToken);
+            var authResponse = AuthenticationResponse.builder()
+                    .accessToken(accessToken)
+                    .userId(user.getId())
+                    .username(user.getUsername())
+                    .refreshToken(refreshToken)
+                    .build();
+            new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+        }
 
     }
 

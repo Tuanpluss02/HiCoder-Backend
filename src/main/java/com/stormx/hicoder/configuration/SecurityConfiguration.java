@@ -1,6 +1,7 @@
 package com.stormx.hicoder.configuration;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -41,9 +42,17 @@ public class SecurityConfiguration {
             "/webjars/**",
             "/swagger-ui.html"};
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final EmptyRequestBodyFilter emptyRequestBodyFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
 
+    @Bean
+    public FilterRegistrationBean<EmptyRequestBodyFilter> emptyRequestBodyFilterRegistrationBean() {
+        FilterRegistrationBean<EmptyRequestBodyFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new EmptyRequestBodyFilter());
+        registrationBean.addUrlPatterns("/api/v1/auth/**");
+        return registrationBean;
+    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

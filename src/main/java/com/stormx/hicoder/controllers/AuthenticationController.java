@@ -26,8 +26,9 @@ public class AuthenticationController {
     private final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @PostMapping("/login")
-    public ResponseEntity<?> userLogin(@Valid @RequestBody AuthenticationRequest authenticationRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> userLogin(@Valid @RequestBody AuthenticationRequest authenticationRequest, BindingResult bindingResult) throws ValidationException {
         if (bindingResult.hasErrors()) {
+            logger.error("Error: {}", bindingResult.getAllErrors());
             List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             throw new ValidationException(errors.getFirst());
         }
@@ -35,7 +36,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> userRegister(@Valid @RequestBody AuthenticationRequest authenticationRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> userRegister(@Valid @RequestBody AuthenticationRequest authenticationRequest, BindingResult bindingResult) throws ValidationException {
         if (bindingResult.hasErrors()) {
             List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             throw new ValidationException(errors.getFirst());

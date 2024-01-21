@@ -10,14 +10,11 @@ import java.util.UUID;
 
 @Slf4j
 public class CustomURLFilter implements Filter {
-
     private static final String REQUEST_ID = "request_id";
-
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
     }
-
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
@@ -31,7 +28,6 @@ public class CustomURLFilter implements Filter {
     public void destroy() {
 
     }
-
     private void logRequest(HttpServletRequest request, String requestId) {
         if (request != null) {
             StringBuilder data = new StringBuilder();

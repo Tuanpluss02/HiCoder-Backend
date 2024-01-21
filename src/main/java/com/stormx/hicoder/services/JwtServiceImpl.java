@@ -33,5 +33,18 @@ public class JwtServiceImpl implements JwtService {
         Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
         return JWT.create().withSubject(user.getUsername()).withExpiresAt(new Date(System.currentTimeMillis() + refreshExpiration)).sign(algorithm);
     }
+
+    @Override
+    public String getUsernameFromToken(String substring) {
+        Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
+        return JWT.require(algorithm).build().verify(substring).getSubject();
+    }
+
+    @Override
+    public boolean isRefreshTokenValid(String refreshToken, User user) {
+        Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
+        String username = JWT.require(algorithm).build().verify(refreshToken).getSubject();
+        return username.equals(user.getUsername());
+    }
 }
 
