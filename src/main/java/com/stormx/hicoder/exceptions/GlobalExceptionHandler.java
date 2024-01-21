@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    @ExceptionHandler({BadRequestException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleUserNotFoundException(BadRequestException ex) {
+        logger.error("User not found: " + ex.getLocalizedMessage());
+        return new ErrorResponse(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), null);
+    }
     @ExceptionHandler({AppException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handlerAppException(Exception e) {

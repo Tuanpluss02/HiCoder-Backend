@@ -1,8 +1,5 @@
 package com.stormx.hicoder.services;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stormx.hicoder.common.Role;
 import com.stormx.hicoder.common.TokenType;
@@ -11,13 +8,13 @@ import com.stormx.hicoder.dto.AuthenticationResponse;
 import com.stormx.hicoder.entities.Token;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.AppException;
+import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.TokenRepository;
 import com.stormx.hicoder.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,13 +40,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse register(AuthenticationRequest request) {
         String email = request.getEmail();
-        if (repository.existsByEmail(email)) throw new AppException(HttpStatus.BAD_REQUEST, "Email already exists");
+        if (repository.existsByEmail(email)) throw new BadRequestException( "Email already exists");
         String role = request.getRole();
         Role userRole;
         if (role == null || role.isEmpty() || role.equals("USER")) userRole = Role.USER;
         else if (role.equals("ADMIN")) {
             if (request.getAdminKey() == null || request.getAdminKey().isEmpty() || !request.getAdminKey().equals(adminKey))
-                throw new RuntimeException("Invalid admin key");
+                throw new BadRequestException("Invalid admin key");
             userRole = Role.ADMIN;
         } else userRole = Role.USER;
         String username = request.getEmail().split("@")[0];
@@ -68,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        User user = repository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = repository.findByEmail(request.getEmail()).orElseThrow(() -> new BadRequestException("User not found"));
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
         revokeAllUserTokens(user);
@@ -79,27 +76,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response)  throws IOException {
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return;
         }
         String refreshToken = authorizationHeader.substring("Bearer ".length());
         String username = jwtService.getUsernameFromToken(refreshToken);
-        User user = repository.findByUsername(username).orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+        User user = repository.findByUsername(username).orElseThrow(() -> new BadRequestException("Invalid refresh token"));
         boolean isRefreshTokenValid = jwtService.isRefreshTokenValid(refreshToken, user);
-        if (isRefreshTokenValid){
+        if (isRefreshTokenValid) {
             revokeAllUserTokens(user);
             Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
             String accessToken = jwtService.generateToken(user, authorities);
             String newRefreshToken = jwtService.generateRefreshToken(user, authorities);
             saveUserToken(user, accessToken);
-            var authResponse = AuthenticationResponse.builder()
-                    .accessToken(accessToken)
-                    .userId(user.getId())
-                    .username(user.getUsername())
-                    .refreshToken(refreshToken)
-                    .build();
+            var authResponse = AuthenticationResponse.builder().accessToken(accessToken).userId(user.getId()).username(user.getUsername()).refreshToken(refreshToken).build();
             new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
         }
 

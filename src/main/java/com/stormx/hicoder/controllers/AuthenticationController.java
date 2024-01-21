@@ -4,6 +4,8 @@ import com.stormx.hicoder.common.ResponeObject;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.services.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -42,5 +45,13 @@ public class AuthenticationController {
             throw new ValidationException(errors.getFirst());
         }
         return ResponseEntity.ok(new ResponeObject(HttpStatus.OK,"Register successfully", authenticationService.register(authenticationRequest)));
+    }
+
+    @PostMapping("/refresh-token")
+    public void refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        authenticationService.refreshToken(request, response);
     }
 }

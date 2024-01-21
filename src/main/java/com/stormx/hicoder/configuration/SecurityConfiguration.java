@@ -14,15 +14,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
-import static com.stormx.hicoder.common.Permission.ADMIN_CREATE;
-import static com.stormx.hicoder.common.Permission.ADMIN_DELETE;
-import static com.stormx.hicoder.common.Permission.ADMIN_READ;
-import static com.stormx.hicoder.common.Permission.ADMIN_UPDATE;
+import static com.stormx.hicoder.common.Permission.*;
 import static com.stormx.hicoder.common.Role.ADMIN;
-import static org.springframework.http.HttpMethod.DELETE;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -42,7 +36,6 @@ public class SecurityConfiguration {
             "/webjars/**",
             "/swagger-ui.html"};
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final EmptyRequestBodyFilter emptyRequestBodyFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
 
@@ -53,6 +46,7 @@ public class SecurityConfiguration {
         registrationBean.addUrlPatterns("/api/v1/auth/**");
         return registrationBean;
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public interface AuthenticationService {
-    public AuthenticationResponse register(AuthenticationRequest request);
-    public AuthenticationResponse authenticate(AuthenticationRequest request);
-    public void refreshToken(HttpServletRequest request,HttpServletResponse response) throws IOException;
+     AuthenticationResponse register(AuthenticationRequest request);
+     AuthenticationResponse authenticate(AuthenticationRequest request);
+     void refreshToken(HttpServletRequest request,HttpServletResponse response) throws IOException;
 }

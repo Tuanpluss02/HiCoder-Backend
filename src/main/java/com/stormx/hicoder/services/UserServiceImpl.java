@@ -1,6 +1,7 @@
 package com.stormx.hicoder.services;
 
 import com.stormx.hicoder.entities.User;
+import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +14,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public UserDetails loadUserByUsername(String username) throws BadRequestException {
+        return userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("User not found"));
     }
 }
