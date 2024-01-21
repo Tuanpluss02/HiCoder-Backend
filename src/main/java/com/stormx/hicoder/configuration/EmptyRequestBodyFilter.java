@@ -15,6 +15,10 @@ import java.io.IOException;
 public class EmptyRequestBodyFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        if (((HttpServletRequest) servletRequest).getRequestURI().equals("/api/v1/auth/refresh-token")) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
         if ("POST".equalsIgnoreCase(((HttpServletRequest) servletRequest).getMethod()) || "PUT".equalsIgnoreCase(((HttpServletRequest) servletRequest).getMethod()) || "PATCH".equalsIgnoreCase(((HttpServletRequest) servletRequest).getMethod())) {
             if (servletRequest.getContentLength() == 0) {
                 servletResponse.setContentType("application/json");
