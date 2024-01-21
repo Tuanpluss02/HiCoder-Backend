@@ -45,6 +45,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             userRole = Role.ADMIN;
         } else userRole = Role.USER;
         String username = request.getEmail().split("@")[0];
+        if (repository.existsByUsername(username)) {
+            String salt = String.valueOf(System.currentTimeMillis());
+            username = username + salt;
+        }
         User user = User.builder().username(username).email(request.getEmail()).password(request.getPassword()).role(userRole).build();
         repository.save(user);
         Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
