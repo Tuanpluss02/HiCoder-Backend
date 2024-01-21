@@ -1,6 +1,8 @@
 package com.stormx.hicoder.services;
 
-import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserService extends UserDetailsService {
+import com.stormx.hicoder.dto.UserDTO;
+
+public interface UserService {
+    UserDTO loadUserByUsername(String username);
 }

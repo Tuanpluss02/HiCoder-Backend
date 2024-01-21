@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository repository;
     private final TokenRepository tokenRepository;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     @Value("${auth.admin-key}")
@@ -52,7 +54,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             String salt = String.valueOf(System.currentTimeMillis());
             username = username + salt;
         }
-        User user = User.builder().username(username).email(request.getEmail()).password(request.getPassword()).role(userRole).build();
+        User user = User.builder().username(username).email(request.getEmail()).password(passwordEncoder.encode(request.getPassword())).role(userRole).build();
         repository.save(user);
         Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
         String jwtToken = jwtService.generateToken(user, authorities);
@@ -70,7 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String jwtToken = jwtService.generateToken(user, authorities);
         String refreshToken = jwtService.generateRefreshToken(user, authorities);
         saveUserToken(user, jwtToken);
-        return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
+        return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
     @Override
@@ -81,7 +83,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         String refreshToken = authorizationHeader.substring("Bearer ".length());
         String username = jwtService.getUsernameFromToken(refreshToken);
-        User user = repository.findByUsername(username).orElseThrow(() -> new BadRequestException("Invalid refresh token"));
+        User user = repository.findByUsername(username).orElseThrow(() -> new BadRequestException("User not found"));
         boolean isRefreshTokenValid = jwtService.isRefreshTokenValid(refreshToken, user);
         if (isRefreshTokenValid) {
             revokeAllUserTokens(user);

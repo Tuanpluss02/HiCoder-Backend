@@ -1,6 +1,6 @@
 package com.stormx.hicoder.controllers;
 
-import com.stormx.hicoder.common.ResponeObject;
+import com.stormx.hicoder.common.ResponseObject;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.services.AuthenticationService;
@@ -42,7 +42,7 @@ public class AuthenticationController {
             List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             throw new ValidationException(errors.getFirst());
         }
-        return ResponseEntity.ok(new ResponeObject(HttpStatus.OK, "Login successfully", authenticationService.authenticate(authenticationRequest)));
+        return ResponseEntity.ok(new ResponseObject(HttpStatus.OK, "Login successfully", authenticationService.authenticate(authenticationRequest)));
     }
 
     @PostMapping(path = "/register")
@@ -51,7 +51,7 @@ public class AuthenticationController {
             List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             throw new ValidationException(errors.getFirst());
         }
-        return ResponseEntity.ok(new ResponeObject(HttpStatus.OK, "Register successfully", authenticationService.register(authenticationRequest)));
+        return ResponseEntity.ok(new ResponseObject(HttpStatus.OK, "Register successfully", authenticationService.register(authenticationRequest)));
     }
 
     @PostMapping("/refresh-token")
