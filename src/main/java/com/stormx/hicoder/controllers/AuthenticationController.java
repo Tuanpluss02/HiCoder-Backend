@@ -1,6 +1,6 @@
 package com.stormx.hicoder.controllers;
 
-import com.stormx.hicoder.common.ResponseObject;
+import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;
 import com.stormx.hicoder.dto.ResetPasswordDTO;
@@ -36,13 +36,13 @@ public class AuthenticationController {
     @PostMapping(path = "/login")
     public ResponseEntity<?> userLogin(@Valid AuthenticationRequest authenticationRequest, BindingResult bindingResult) throws ValidationException {
         checkValidRequest(bindingResult);
-        return ResponseEntity.ok(new ResponseObject(HttpStatus.OK, "Login successfully", authenticationService.authenticate(authenticationRequest)));
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Login successfully", authenticationService.authenticate(authenticationRequest)));
     }
 
     @PostMapping(path = "/register")
     public ResponseEntity<?> userRegister(@Valid AuthenticationRequest authenticationRequest, BindingResult bindingResult) throws ValidationException {
         checkValidRequest(bindingResult);
-        return ResponseEntity.ok(new ResponseObject(HttpStatus.OK, "Register successfully", authenticationService.register(authenticationRequest)));
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Register successfully", authenticationService.register(authenticationRequest)));
     }
     @PostMapping("/reset-password")
     public ResponseEntity<?> sendEmailResetPassword(@Valid ResetPasswordDTO resetPasswordDTO, BindingResult bindingResult) throws ValidationException {
