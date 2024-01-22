@@ -3,21 +3,25 @@ package com.stormx.hicoder.services;
 import com.stormx.hicoder.common.Role;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;
+import com.stormx.hicoder.dto.ResetPasswordDTO;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
-import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.repositories.UserRepository;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -29,6 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
     @Value("${auth.admin-key}")
     private String adminKey;
@@ -84,4 +89,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).role(user.getRole().toString()).accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
+    @Override
+    public void sendEmailResetPassword(ResetPasswordDTO resetPasswordDTO) {
+        try {
+            String email = resetPasswordDTO.getEmail();
+            ClassPathResource resource = new ClassPathResource("ResetPasswordTemplate.html");
+            byte[] fileBytes = new byte[0];
+            fileBytes = FileCopyUtils.copyToByteArray(resource.getFile());
+            String body = new String(fileBytes);
+            emailService.sendMail(email, "HiCoder | Reset password", body);
+        } catch (IOException | MessagingException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

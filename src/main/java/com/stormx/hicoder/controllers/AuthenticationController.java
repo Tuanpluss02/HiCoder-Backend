@@ -3,6 +3,7 @@ package com.stormx.hicoder.controllers;
 import com.stormx.hicoder.common.ResponseObject;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;
+import com.stormx.hicoder.dto.ResetPasswordDTO;
 import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.services.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,22 +39,21 @@ public class AuthenticationController {
 
     @PostMapping(path = "/login")
     public ResponseEntity<?> userLogin(@Valid AuthenticationRequest authenticationRequest, BindingResult bindingResult) throws ValidationException {
-        if (bindingResult.hasErrors()) {
-            logger.error("Error: {}", bindingResult.getAllErrors());
-            List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
-            throw new ValidationException(errors.getFirst());
-        }
+        checkValidRequest(bindingResult);
         return ResponseEntity.ok(new ResponseObject(HttpStatus.OK, "Login successfully", authenticationService.authenticate(authenticationRequest)));
     }
 
     @PostMapping(path = "/register")
     public ResponseEntity<?> userRegister(@Valid AuthenticationRequest authenticationRequest, BindingResult bindingResult) throws ValidationException {
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
-            throw new ValidationException(errors.getFirst());
-        }
+        checkValidRequest(bindingResult);
         return ResponseEntity.ok(new ResponseObject(HttpStatus.OK, "Register successfully", authenticationService.register(authenticationRequest)));
     }
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> sendEmailResetPassword(@Valid ResetPasswordDTO resetPasswordDTO, BindingResult bindingResult) throws ValidationException {
+        checkValidRequest(bindingResult);
+        return ResponseEntity.accepted().build();
+    }
+
 
     @PostMapping("/refresh-token")
     public AuthenticationResponse refreshToken(
@@ -62,4 +62,12 @@ public class AuthenticationController {
     )  {
         return authenticationService.getNewAccessToken(request, response);
     }
+
+    private static void checkValidRequest(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
+            throw new ValidationException(errors.getFirst());
+        }
+    }
+
 }
