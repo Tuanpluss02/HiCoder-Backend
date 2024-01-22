@@ -39,13 +39,6 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
-    @Bean
-    public FilterRegistrationBean<EmptyRequestBodyFilter> emptyRequestBodyFilterRegistrationBean() {
-        FilterRegistrationBean<EmptyRequestBodyFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new EmptyRequestBodyFilter());
-        registrationBean.addUrlPatterns("/api/v1/auth/**");
-        return registrationBean;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

@@ -7,7 +7,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 @Configuration
-public class RequestLoggingFilterConfig {
+public class FilterConfig {
+    @Bean
+    public FilterRegistrationBean<EmptyRequestBodyFilter> emptyRequestBodyFilterRegistrationBean() {
+        FilterRegistrationBean<EmptyRequestBodyFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new EmptyRequestBodyFilter());
+        registrationBean.addUrlPatterns("/api/v1/auth/**");
+        return registrationBean;
+    }
 
     @Bean
     public CommonsRequestLoggingFilter logFilter() {
