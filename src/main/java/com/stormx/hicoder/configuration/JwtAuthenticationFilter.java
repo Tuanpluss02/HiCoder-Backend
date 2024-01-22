@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stormx.hicoder.common.ErrorResponse;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -54,16 +55,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey.getBytes())).build().verify(authorizationHeader.substring("Bearer ".length()));
             String username = decodedJWT.getSubject();
-            userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("User not found"));
+            userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));
             Collection<SimpleGrantedAuthority> authorities = Arrays.stream(decodedJWT.getClaim("roles").asArray(String.class)).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null, authorities));
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            response.setHeader(String.valueOf(UNAUTHORIZED), e.getMessage());
-            response.setStatus(FORBIDDEN.value());
+            response.setStatus(UNAUTHORIZED.value());
             response.setContentType(APPLICATION_JSON_VALUE);
-            var error = Map.of("error_message", e.getMessage());
-            new ObjectMapper().writeValue(response.getOutputStream(), error);
+            new ObjectMapper().writeValue(response.getOutputStream(), new ErrorResponse(UNAUTHORIZED, e.getMessage(), null));
         }
 
     }
