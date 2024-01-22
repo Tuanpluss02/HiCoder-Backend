@@ -29,21 +29,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({BadCredentialsException.class})
-    public ErrorResponse handleBadCredentialEXception(BadCredentialsException exception){
+    public ErrorResponse handleBadCredentialException(BadCredentialsException exception){
         logger.error("Bad Credential: " + exception.getLocalizedMessage() );
         return new ErrorResponse(HttpStatus.BAD_REQUEST, "Email or password is incorrect", null);
     }
+    @ExceptionHandler({BadRequestException.class})
+    public ErrorResponse handleBadRequestException(BadRequestException exception){
+        logger.error("Bad Request: " + exception.getLocalizedMessage() );
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, exception.getLocalizedMessage(), null);
+    }
 
-//    @ExceptionHandler({RuntimeException.class})
-//    public ErrorResponse handleRuntimeException(RuntimeException exception) {
-//        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-//        String errorMessage = exception.getLocalizedMessage();
-//        if (exception instanceof BadRequestException || exception instanceof BadCredentialsException) {
-//            httpStatus = HttpStatus.BAD_REQUEST;
-//            errorMessage = "Email or password is incorrect";
-//        }
-//        return new ErrorResponse(httpStatus, errorMessage, null);
-//    }
+    @ExceptionHandler({RuntimeException.class})
+    public ErrorResponse handleRuntimeException(RuntimeException exception) {
+        logger.error("Runtime Error: " + exception.getLocalizedMessage() );
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong", null);
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
