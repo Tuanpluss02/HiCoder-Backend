@@ -1,6 +1,7 @@
 package com.stormx.hicoder.services;
 
 import com.stormx.hicoder.common.GsonParserUtils;
+import com.stormx.hicoder.interfaces.LoggingService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class LoggingServiceImpl implements LoggingService{
+public class LoggingServiceImpl implements LoggingService {
     private static final String REQUEST_ID = "request_id";
     @Override
     public void logRequest(HttpServletRequest httpServletRequest, Object body) {

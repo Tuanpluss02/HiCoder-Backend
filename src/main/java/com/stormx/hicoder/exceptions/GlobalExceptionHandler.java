@@ -21,23 +21,29 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage(), null);
     }
 
-    @ExceptionHandler({ValidationException.class, BadRequestException.class})
+    @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(ValidationException ex) {
         logger.error("Validation Error: " + ex.getLocalizedMessage());
         return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), null);
     }
 
-    @ExceptionHandler({RuntimeException.class})
-    public ErrorResponse handleRuntimeException(RuntimeException exception) {
-        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        String errorMessage = exception.getLocalizedMessage();
-        if (exception instanceof BadRequestException || exception instanceof BadCredentialsException) {
-            httpStatus = HttpStatus.BAD_REQUEST;
-            errorMessage = "Email or password is incorrect";
-        }
-        return new ErrorResponse(httpStatus, errorMessage, null);
+    @ExceptionHandler({BadCredentialsException.class})
+    public ErrorResponse handleBadCredentialEXception(BadCredentialsException exception){
+        logger.error("Bad Credential: " + exception.getLocalizedMessage() );
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, "Email or password is incorrect", null);
     }
+
+//    @ExceptionHandler({RuntimeException.class})
+//    public ErrorResponse handleRuntimeException(RuntimeException exception) {
+//        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+//        String errorMessage = exception.getLocalizedMessage();
+//        if (exception instanceof BadRequestException || exception instanceof BadCredentialsException) {
+//            httpStatus = HttpStatus.BAD_REQUEST;
+//            errorMessage = "Email or password is incorrect";
+//        }
+//        return new ErrorResponse(httpStatus, errorMessage, null);
+//    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

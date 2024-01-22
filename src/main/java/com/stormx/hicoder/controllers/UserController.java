@@ -3,7 +3,7 @@ package com.stormx.hicoder.controllers;
 import com.stormx.hicoder.common.ResponseObject;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.exceptions.AppException;
-import com.stormx.hicoder.services.UserService;
+import com.stormx.hicoder.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

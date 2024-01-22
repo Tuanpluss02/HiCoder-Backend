@@ -1,4 +1,4 @@
-package com.stormx.hicoder.services;
+package com.stormx.hicoder.interfaces;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

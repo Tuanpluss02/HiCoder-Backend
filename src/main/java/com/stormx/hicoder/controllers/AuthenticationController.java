@@ -5,7 +5,7 @@ import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;
 import com.stormx.hicoder.dto.ResetPasswordDTO;
 import com.stormx.hicoder.exceptions.ValidationException;
-import com.stormx.hicoder.services.AuthenticationService;
+import com.stormx.hicoder.interfaces.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 

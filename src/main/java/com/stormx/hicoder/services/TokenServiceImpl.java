@@ -3,8 +3,9 @@ package com.stormx.hicoder.services;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.stormx.hicoder.dto.UserDTO;
-import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
+import com.stormx.hicoder.interfaces.RedisService;
+import com.stormx.hicoder.interfaces.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,7 +26,7 @@ public class TokenServiceImpl implements TokenService {
     private Long refreshExpiration;
 
     @Autowired
-    private  RedisService redisService;
+    private RedisService redisService;
     @Override
     public String generateToken(UserDTO user, Collection<SimpleGrantedAuthority> authorities) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
