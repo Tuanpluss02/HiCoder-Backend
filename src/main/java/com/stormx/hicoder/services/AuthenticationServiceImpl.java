@@ -57,10 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = User.builder().username(username).email(request.getEmail()).password(passwordEncoder.encode(request.getPassword())).role(userRole).build();
         repository.save(user);
         Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
-        String jwtToken = jwtService.generateToken(user, authorities);
-        String refreshToken = jwtService.generateRefreshToken(user, authorities);
-        saveUserToken(user, jwtToken);
-        return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).accessToken(jwtToken).refreshToken(refreshToken).build();
+        return getAuthenticationResponse(user, authorities);
     }
 
     @Override
@@ -69,10 +66,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
         revokeAllUserTokens(user);
+        return getAuthenticationResponse(user, authorities);
+    }
+
+    private AuthenticationResponse getAuthenticationResponse(User user, Collection<SimpleGrantedAuthority> authorities) {
         String jwtToken = jwtService.generateToken(user, authorities);
         String refreshToken = jwtService.generateRefreshToken(user, authorities);
         saveUserToken(user, jwtToken);
-        return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).accessToken(jwtToken).refreshToken(refreshToken).build();
+        return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).role(user.getRole().toString()).accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
     @Override
