@@ -1,6 +1,7 @@
 package com.stormx.hicoder.services;
 
 import com.stormx.hicoder.entities.User;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 

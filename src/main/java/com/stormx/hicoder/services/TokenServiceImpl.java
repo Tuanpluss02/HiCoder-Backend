@@ -3,6 +3,8 @@ package com.stormx.hicoder.services;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.stormx.hicoder.entities.User;
+import com.stormx.hicoder.exceptions.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,7 +15,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Service
-public class JwtServiceImpl implements JwtService {
+public class TokenServiceImpl implements TokenService {
     @Value("${jwt.secret-key}")
     private String secretKey;
     @Value("${jwt.expiration}")
@@ -21,6 +23,8 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.refresh-token.expiration}")
     private Long refreshExpiration;
 
+    @Autowired
+    private  RedisService redisService;
     @Override
     public String generateToken(User user, Collection<SimpleGrantedAuthority> authorities) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
@@ -35,16 +39,16 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String getUsernameFromToken(String substring) {
-        Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
-        return JWT.require(algorithm).build().verify(substring).getSubject();
+    public void saveRefreshToken(String token, User userDetails) {
+        redisService.saveRefreshToken(token, refreshExpiration, userDetails);
     }
 
+
     @Override
-    public boolean isRefreshTokenValid(String refreshToken, User user) {
-        Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
-        String username = JWT.require(algorithm).build().verify(refreshToken).getSubject();
-        return username.equals(user.getUsername());
+    public User isRefreshTokenValid(String refreshToken) {
+        User user = redisService.getUserFromRefreshToken(refreshToken);
+        if (user == null) throw new BadRequestException("Refresh token is not valid or expired");
+        return user;
     }
 }
 

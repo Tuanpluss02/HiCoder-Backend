@@ -5,12 +5,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 
-public interface JwtService {
+public interface TokenService {
     String generateToken(User user, Collection<SimpleGrantedAuthority> authorities);
 
     String generateRefreshToken(User user, Collection<SimpleGrantedAuthority> authorities);
 
-    String getUsernameFromToken(String substring);
+    void saveRefreshToken(String token, User userDetails);
 
-    boolean isRefreshTokenValid(String refreshToken, User user);
+    User isRefreshTokenValid(String refreshToken);
 }

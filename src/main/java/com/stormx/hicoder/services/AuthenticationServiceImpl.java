@@ -1,14 +1,10 @@
 package com.stormx.hicoder.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stormx.hicoder.common.Role;
-import com.stormx.hicoder.common.TokenType;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;
-import com.stormx.hicoder.entities.Token;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
-import com.stormx.hicoder.repositories.TokenRepository;
 import com.stormx.hicoder.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +16,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -29,8 +24,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository repository;
-    private final TokenRepository tokenRepository;
-    private final JwtService jwtService;
+    private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -65,51 +59,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = repository.findByEmail(request.getEmail()).orElseThrow(() -> new BadRequestException("User not found"));
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
-        revokeAllUserTokens(user);
         return getAuthenticationResponse(user, authorities);
     }
 
     private AuthenticationResponse getAuthenticationResponse(User user, Collection<SimpleGrantedAuthority> authorities) {
-        String jwtToken = jwtService.generateToken(user, authorities);
-        String refreshToken = jwtService.generateRefreshToken(user, authorities);
-        saveUserToken(user, jwtToken);
+        String jwtToken = tokenService.generateToken(user, authorities);
+        String refreshToken = tokenService.generateRefreshToken(user, authorities);
         return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).role(user.getRole().toString()).accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
     @Override
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public AuthenticationResponse getNewAccessToken(HttpServletRequest request, HttpServletResponse response) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return;
+            throw new BadRequestException("Refresh token is missing");
         }
         String refreshToken = authorizationHeader.substring("Bearer ".length());
-        String username = jwtService.getUsernameFromToken(refreshToken);
-        User user = repository.findByUsername(username).orElseThrow(() -> new BadRequestException("User not found"));
-        boolean isRefreshTokenValid = jwtService.isRefreshTokenValid(refreshToken, user);
-        if (isRefreshTokenValid) {
-            revokeAllUserTokens(user);
-            Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
-            String accessToken = jwtService.generateToken(user, authorities);
-            String newRefreshToken = jwtService.generateRefreshToken(user, authorities);
-            saveUserToken(user, accessToken);
-            var authResponse = AuthenticationResponse.builder().accessToken(accessToken).userId(user.getId()).username(user.getUsername()).refreshToken(newRefreshToken).build();
-            new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-        }
-
+        User user = tokenService.isRefreshTokenValid(refreshToken);
+        Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
+        String jwtToken = tokenService.generateToken(user, authorities);
+        return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).role(user.getRole().toString()).accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
-    private void saveUserToken(User user, String jwtToken) {
-        var token = Token.builder().user(user).token(jwtToken).tokenType(TokenType.BEARER).expired(false).revoked(false).build();
-        tokenRepository.save(token);
-    }
-
-    private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-        if (validUserTokens.isEmpty()) return;
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
-        tokenRepository.saveAll(validUserTokens);
-    }
 }

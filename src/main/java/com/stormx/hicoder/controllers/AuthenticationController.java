@@ -2,6 +2,7 @@ package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.ResponseObject;
 import com.stormx.hicoder.dto.AuthenticationRequest;
+import com.stormx.hicoder.dto.AuthenticationResponse;
 import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.services.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,10 +56,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
-    public void refreshToken(
+    public AuthenticationResponse refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws IOException {
-        authenticationService.refreshToken(request, response);
+    )  {
+        return authenticationService.getNewAccessToken(request, response);
     }
 }
