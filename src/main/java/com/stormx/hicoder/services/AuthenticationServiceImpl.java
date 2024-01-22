@@ -6,6 +6,7 @@ import com.stormx.hicoder.dto.AuthenticationResponse;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
+import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,7 +58,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        User user = repository.findByEmail(request.getEmail()).orElseThrow(() -> new BadRequestException("User not found"));
+        User user = repository.findByEmail(request.getEmail()).orElseThrow(() -> new BadRequestException("Email or password is incorrect"));
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
         return getAuthenticationResponse(user, authorities);

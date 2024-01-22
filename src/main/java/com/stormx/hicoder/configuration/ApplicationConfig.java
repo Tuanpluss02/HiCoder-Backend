@@ -1,6 +1,7 @@
 package com.stormx.hicoder.configuration;
 
 import com.stormx.hicoder.exceptions.BadRequestException;
+import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> repository.findByUsername(username).orElseThrow(() -> new BadRequestException("User not found"));
+        return email -> repository.findByEmail(email).orElseThrow(() -> new BadRequestException("Email or password is incorrect"));
     }
 
     @Bean
