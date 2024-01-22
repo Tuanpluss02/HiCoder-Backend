@@ -3,6 +3,7 @@ package com.stormx.hicoder.services;
 import com.stormx.hicoder.common.Role;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;
+import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.UserRepository;
@@ -63,8 +64,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private AuthenticationResponse getAuthenticationResponse(User user, Collection<SimpleGrantedAuthority> authorities) {
-        String jwtToken = tokenService.generateToken(user, authorities);
-        String refreshToken = tokenService.generateRefreshToken(user, authorities);
+        UserDTO userDTO = new UserDTO(user);
+        String jwtToken = tokenService.generateToken(userDTO, authorities);
+        String refreshToken = tokenService.generateRefreshToken(userDTO, authorities);
         return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).role(user.getRole().toString()).accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
@@ -75,7 +77,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BadRequestException("Refresh token is missing");
         }
         String refreshToken = authorizationHeader.substring("Bearer ".length());
-        User user = tokenService.isRefreshTokenValid(refreshToken);
+        UserDTO user = tokenService.isRefreshTokenValid(refreshToken);
         Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
         String jwtToken = tokenService.generateToken(user, authorities);
         return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).role(user.getRole().toString()).accessToken(jwtToken).refreshToken(refreshToken).build();
