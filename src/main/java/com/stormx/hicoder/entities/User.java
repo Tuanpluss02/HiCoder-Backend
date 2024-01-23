@@ -37,6 +37,10 @@ public class User  implements UserDetails {
     private String email;
 
     @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Post> posts = new ArrayList<>();
+
+    @JsonIgnore
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     private List<Message> sentMessages  = new ArrayList<>();
 
@@ -44,9 +48,6 @@ public class User  implements UserDetails {
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
     private List<Message> receivedMessages = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany(mappedBy = "likedByUsers")
