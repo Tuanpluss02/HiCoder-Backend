@@ -24,7 +24,7 @@ public class EmptyRequestBodyFilter implements Filter {
                 servletResponse.setContentType("application/json");
                 servletResponse.setCharacterEncoding("UTF-8");
                 ((HttpServletResponse) servletResponse).setStatus(400);
-                new ObjectMapper().writeValue(servletResponse.getOutputStream(), new ErrorResponse(HttpStatus.BAD_REQUEST, "Request body is empty", null));
+                new ObjectMapper().writeValue(servletResponse.getOutputStream(), new ErrorResponse(HttpStatus.BAD_REQUEST, "Request body is empty"));
                 return;
             }
         }

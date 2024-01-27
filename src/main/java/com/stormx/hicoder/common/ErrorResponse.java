@@ -8,8 +8,8 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 public class ErrorResponse extends ResponseGeneral {
-    public ErrorResponse(HttpStatus statusCode, String errorMessage, Object body) {
-        super(statusCode, errorMessage, body);
+    public ErrorResponse(HttpStatus statusCode, String errorMessage) {
+        super(statusCode, errorMessage, null);
     }
 
 }

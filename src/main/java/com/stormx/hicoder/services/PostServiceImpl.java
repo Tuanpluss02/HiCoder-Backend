@@ -1,6 +1,9 @@
 package com.stormx.hicoder.services;
 
 import com.stormx.hicoder.dto.PostDTO;
+import com.stormx.hicoder.entities.Post;
+import com.stormx.hicoder.entities.User;
+import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.interfaces.PostService;
 import com.stormx.hicoder.repositories.PostRepository;
 import com.stormx.hicoder.repositories.UserRepository;
@@ -8,36 +11,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService {
     @Autowired
     private PostRepository postRepository;
-    @Autowired
-    private UserRepository userRepository;
 
     @Override
-    public List<PostDTO> getAllPosts() {
-        return postRepository.findAll();
-    }
-
-    //    @Override
-//    public List
-    @Override
-    public PostDTO getPostById(String postId) {
-        Optional<PostDTO> postOptional = Optional.of(new PostDTO(postRepository.findById(postId)));
-        return postOptional.orElse(null);
+    public List<Post> getAllPostsOfUser(User user) {
+        return postRepository.findAllByUser(user);
     }
 
     @Override
-    public PostDTO createPost(PostDTO post) {
-        return postRepository.save(post);
+    public Post getPostById(String postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new BadRequestException("Post not found id: " + postId));
     }
 
     @Override
-    public PostDTO updatePost(String postId, PostDTO postDetails) {
-        PostDTO post = getPostById(postId);
+    public Post createPost(PostDTO post, User user) {
+        Post newPost = Post.builder()
+                .title(post.getTitle())
+                .content(post.getContent())
+                .user(user)
+                .build();
+        return postRepository.save(newPost);
+    }
+
+    @Override
+    public Post updatePost(String postId, PostDTO postDetails) {
+        Post post = getPostById(postId);
         if (post != null) {
             post.setTitle(postDetails.getTitle());
             post.setContent(postDetails.getContent());
@@ -48,7 +50,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public boolean deletePost(String postId) {
-        PostDTO post = getPostById(postId);
+        Post post = getPostById(postId);
         if (post != null) {
             postRepository.delete(post);
             return true;

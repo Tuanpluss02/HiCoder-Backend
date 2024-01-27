@@ -2,17 +2,18 @@ package com.stormx.hicoder.interfaces;
 
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
+import com.stormx.hicoder.entities.User;
 
 import java.util.List;
 
 public interface PostService {
-    List<Post> getAllPosts();
+    List<Post> getAllPostsOfUser(User user);
 
-    PostDTO getPostById(String postId);
+    Post getPostById(String postId);
 
-    Post createPost(Post post);
+    Post createPost(PostDTO post, User user);
 
-    Post updatePost(String postId, Post postDetails);
+    Post updatePost(String postId, PostDTO postDetails);
 
     boolean deletePost(String postId);
 }
