@@ -11,7 +11,6 @@ public abstract class ResponseGeneral {
     HttpStatus statusCode;
     String message;
     Object body;
-
     int getStatusCode() {
         return statusCode.value();
     }

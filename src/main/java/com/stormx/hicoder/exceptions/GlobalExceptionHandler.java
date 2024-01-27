@@ -40,6 +40,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({RuntimeException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleRuntimeException(RuntimeException exception) {
         logger.error("Runtime Error: " + exception.getLocalizedMessage() );
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong");
@@ -48,7 +49,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleUnwantedException(Exception e) {
-        logger.error("Unknown error: " + e.getLocalizedMessage());
+        logger.error("Unknown error: "  +  e.getLocalizedMessage());
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ops! Have an unknown error");
     }
 }

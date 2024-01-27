@@ -23,6 +23,4 @@ public class UserController {
         UserDTO currentUser = userService.getCurrentUser();
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", currentUser));
     }
-
-
 }
