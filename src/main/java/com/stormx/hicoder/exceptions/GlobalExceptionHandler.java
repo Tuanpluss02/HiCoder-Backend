@@ -29,11 +29,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({BadCredentialsException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadCredentialException(BadCredentialsException exception){
         logger.error("Bad Credential: " + exception.getLocalizedMessage() );
         return new ErrorResponse(HttpStatus.BAD_REQUEST, "Email or password is incorrect");
     }
     @ExceptionHandler({BadRequestException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(BadRequestException exception){
         logger.error("Bad Request: " + exception.getLocalizedMessage() );
         return new ErrorResponse(HttpStatus.BAD_REQUEST, exception.getLocalizedMessage());

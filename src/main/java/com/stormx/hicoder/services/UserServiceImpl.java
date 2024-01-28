@@ -1,6 +1,6 @@
 package com.stormx.hicoder.services;
 
-import com.stormx.hicoder.dto.UserDTO;
+import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.AppException;
 import com.stormx.hicoder.interfaces.UserService;
 import com.stormx.hicoder.repositories.UserRepository;
@@ -16,15 +16,14 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public UserDTO loadUserByUsername(String username) {
+    public User loadUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .map(UserDTO::new)
                 .orElseThrow(() -> new AppException(HttpStatus.UNAUTHORIZED, "User is not authenticated"));
     }
 
 
     @Override
-    public UserDTO getCurrentUser() {
+    public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(HttpStatus.UNAUTHORIZED, "User is not authenticated");

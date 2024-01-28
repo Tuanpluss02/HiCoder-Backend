@@ -1,4 +1,4 @@
-package com.stormx.hicoder.configuration;
+package com.stormx.hicoder.filter;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
