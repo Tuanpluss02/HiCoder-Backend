@@ -38,10 +38,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
+    private static final String[] WHITE_LIST_URL = {
+            "/api/v1/auth",
+            "/h2-console",
+            "/swagger-resources",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html"
+    };
+
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().contains("/api/v1/auth")) {
+        String servletPath = request.getServletPath();
+        if (Arrays.stream(WHITE_LIST_URL).anyMatch(servletPath::startsWith)) {
             filterChain.doFilter(request, response);
             return;
         }
