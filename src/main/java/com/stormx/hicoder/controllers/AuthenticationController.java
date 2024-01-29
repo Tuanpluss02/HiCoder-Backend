@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping(path = "/api/v1/auth",
         consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
@@ -47,7 +46,7 @@ public class AuthenticationController {
     public ResponseEntity<?> sendEmailResetPassword(@Valid ResetPasswordDTO resetPasswordDTO, BindingResult bindingResult, HttpServletRequest request) throws ValidationException {
         checkValidRequest(bindingResult);
         authenticationService.sendEmailResetPassword(resetPasswordDTO);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Send email reset password successfully", request.getRequestURI(), null));
     }
 
 

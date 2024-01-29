@@ -16,8 +16,8 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void saveToken(String token, Long expireTime, UserDTO userDetails) {
-        redisTemplate.opsForValue().set(token, userDetails, expireTime, TimeUnit.MILLISECONDS);
+    public void saveToken(String token, Long expireTime, Object obj) {
+        redisTemplate.opsForValue().set(token, obj, expireTime, TimeUnit.MILLISECONDS);
     }
 
     @Override
