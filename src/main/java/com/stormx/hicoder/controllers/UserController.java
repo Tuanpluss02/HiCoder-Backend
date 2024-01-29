@@ -4,6 +4,7 @@ import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.interfaces.ResponseGeneral;
 import com.stormx.hicoder.interfaces.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,8 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/me")
-    ResponseEntity<ResponseGeneral> getCurrentUserDetail() {
+    ResponseEntity<ResponseGeneral> getCurrentUserDetail(HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", currentUser));
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", request.getRequestURI(), currentUser));
     }
 }

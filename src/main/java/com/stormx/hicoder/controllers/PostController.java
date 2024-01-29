@@ -6,6 +6,7 @@ import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.interfaces.PostService;
 import com.stormx.hicoder.interfaces.ResponseGeneral;
 import com.stormx.hicoder.interfaces.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,15 +25,15 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("/me")
-    public ResponseEntity<ResponseGeneral> getCurrentUserPosts() {
+    public ResponseEntity<ResponseGeneral> getCurrentUserPosts(HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", postService.getAllPostsOfUser(currentUser)));
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", request.getRequestURI(), postService.getAllPostsOfUser(currentUser)));
     }
 
     @PostMapping("/new")
-    public ResponseEntity<ResponseGeneral> newPost(@Valid NewPostDTO newPostDTO) {
+    public ResponseEntity<ResponseGeneral> newPost(@Valid NewPostDTO newPostDTO, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Create new post successfully", postService.createPost(newPostDTO, currentUser)));
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Create new post successfully", request.getRequestURI(), postService.createPost(newPostDTO, currentUser)));
 
     }
 }

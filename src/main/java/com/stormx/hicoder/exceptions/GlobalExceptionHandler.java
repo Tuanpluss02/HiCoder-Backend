@@ -2,6 +2,7 @@ package com.stormx.hicoder.exceptions;
 
 
 import com.stormx.hicoder.common.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,43 +17,43 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({AppException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handlerAppException(Exception e) {
+    public ErrorResponse handlerAppException(Exception e, HttpServletRequest request) {
         logger.error("AppException: " + e.getLocalizedMessage());
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(ValidationException ex) {
+    public ErrorResponse handleValidationException(ValidationException ex, HttpServletRequest request) {
         logger.error("Validation Error: " + ex.getLocalizedMessage());
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler({BadCredentialsException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadCredentialException(BadCredentialsException exception){
+    public ErrorResponse handleBadCredentialException(BadCredentialsException exception, HttpServletRequest request) {
         logger.error("Bad Credential: " + exception.getLocalizedMessage() );
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, "Email or password is incorrect");
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, "Email or password is incorrect", request.getRequestURI());
     }
     @ExceptionHandler({BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequestException(BadRequestException exception){
+    public ErrorResponse handleBadRequestException(BadRequestException exception, HttpServletRequest request) {
         logger.error("Bad Request: " + exception.getLocalizedMessage() );
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, exception.getLocalizedMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, exception.getLocalizedMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler({RuntimeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleRuntimeException(RuntimeException exception) {
+    public ErrorResponse handleRuntimeException(RuntimeException exception, HttpServletRequest request) {
         logger.error("Runtime Error: " + exception.getLocalizedMessage() );
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong");
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong", request.getRequestURI());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleUnwantedException(Exception e) {
+    public ErrorResponse handleUnwantedException(Exception e, HttpServletRequest request) {
         logger.error("Unknown error: "  +  e.getLocalizedMessage());
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ops! Have an unknown error");
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ops! Have an unknown error", request.getRequestURI());
     }
 }
 

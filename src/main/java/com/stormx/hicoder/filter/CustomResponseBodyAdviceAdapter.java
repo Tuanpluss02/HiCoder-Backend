@@ -38,7 +38,6 @@ public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Objec
                     ((ServletServerHttpRequest) serverHttpRequest).getServletRequest(),
                     ((ServletServerHttpResponse) serverHttpResponse).getServletResponse(), o);
         }
-
         return o;
     }
 }
