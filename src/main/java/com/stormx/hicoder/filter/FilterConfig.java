@@ -1,6 +1,5 @@
 package com.stormx.hicoder.filter;
 
-import com.stormx.hicoder.common.CustomURLFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

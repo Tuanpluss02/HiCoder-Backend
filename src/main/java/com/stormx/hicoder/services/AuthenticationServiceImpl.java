@@ -3,7 +3,7 @@ package com.stormx.hicoder.services;
 import com.stormx.hicoder.common.Role;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;
-import com.stormx.hicoder.dto.ResetPasswordDTO;
+import com.stormx.hicoder.dto.RequestResetPasswordDTO;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
@@ -94,11 +94,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void sendEmailResetPassword(ResetPasswordDTO resetPasswordDTO) {
+    public void sendEmailResetPassword(RequestResetPasswordDTO requestResetPasswordDTO) {
         Context context = new Context();
-        String token = tokenService.generateResetPasswordToken(resetPasswordDTO.getEmail());
+        String token = tokenService.generateResetPasswordToken();
         context.setVariable("reset-link", "http://localhost:3000/reset-password?token=" + token);
-        redisService.saveToken(token, RESETPWD_TOKEN_EXPIRATION, resetPasswordDTO.getEmail());
-        emailService.sendEmailWithHtml(resetPasswordDTO.getEmail(), "HiCoder | Reset password", "email-template", context);
+        redisService.saveToken(token, RESETPWD_TOKEN_EXPIRATION, requestResetPasswordDTO.getEmail());
+        emailService.sendEmailWithHtml(requestResetPasswordDTO.getEmail(), "HiCoder | Reset password", "email-template", context);
     }
 }

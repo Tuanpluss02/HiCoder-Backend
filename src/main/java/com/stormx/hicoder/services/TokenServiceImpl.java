@@ -14,31 +14,30 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class TokenServiceImpl implements TokenService {
     @Value("${jwt.secret-key}")
-    private String SERCRET_KEY;
+    private String SECRET_KEY;
     @Value("${jwt.expiration}")
     private Long JWT_EXPIRATION;
     @Value("${jwt.refresh-token.expiration}")
     private Long REFRESH_TOKEN_EXPIRATION;
-    @Value("${token.reset-password.expiration}")
-    private Long RESETPWD_TOKEN_EXPIRATION;
 
     @Autowired
     private RedisService redisService;
     @Override
     public String generateToken(UserDTO user, Collection<SimpleGrantedAuthority> authorities) {
-        Algorithm algorithm = Algorithm.HMAC256(SERCRET_KEY.getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
         return JWT.create().withSubject(user.getUsername()).withExpiresAt(new Date(System.currentTimeMillis() + JWT_EXPIRATION)).withClaim("roles", authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())).sign(algorithm);
 
     }
 
     @Override
     public String generateRefreshToken(UserDTO user, Collection<SimpleGrantedAuthority> authorities) {
-        Algorithm algorithm = Algorithm.HMAC256(SERCRET_KEY.getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
         String refreshToken = JWT.create().withSubject(user.getUsername()).withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION)).sign(algorithm);
         saveRefreshToken(refreshToken, user);
         return refreshToken;
@@ -58,9 +57,8 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public String generateResetPasswordToken(String email) {
-        Algorithm algorithm = Algorithm.HMAC256(SERCRET_KEY.getBytes());
-        return JWT.create().withSubject(email).withExpiresAt(new Date(System.currentTimeMillis() + RESETPWD_TOKEN_EXPIRATION)).sign(algorithm);
+    public String generateResetPasswordToken() {
+        return UUID.randomUUID().toString();
     }
 }
 

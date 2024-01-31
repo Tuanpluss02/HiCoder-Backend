@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stormx.hicoder.common.ErrorResponse;
+import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -57,13 +58,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+            response.setStatus(UNAUTHORIZED.value());
+            response.setContentType(APPLICATION_JSON_VALUE);
+            new ObjectMapper().writeValue(response.getOutputStream(), new ErrorResponse(UNAUTHORIZED, "Token is required", servletPath));
             return;
         }
         try {
             DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey.getBytes())).build().verify(authorizationHeader.substring("Bearer ".length()));
             String username = decodedJWT.getSubject();
-            userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));
             Collection<SimpleGrantedAuthority> authorities = Arrays.stream(decodedJWT.getClaim("roles").asArray(String.class)).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null, authorities));
             filterChain.doFilter(request, response);

@@ -14,5 +14,5 @@ public interface TokenService {
 
     UserDTO isRefreshTokenValid(String refreshToken);
 
-    String generateResetPasswordToken(String email);
+    String generateResetPasswordToken();
 }

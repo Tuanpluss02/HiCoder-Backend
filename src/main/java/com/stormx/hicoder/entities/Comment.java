@@ -2,7 +2,7 @@ package com.stormx.hicoder.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,25 +15,23 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne 
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne 
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany 
     @JoinTable(
             name = "comment_likes",
             joinColumns = @JoinColumn(name = "comment_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> likedByUsers = new ArrayList<>();
-
-    // constructors, getters, setters
 }

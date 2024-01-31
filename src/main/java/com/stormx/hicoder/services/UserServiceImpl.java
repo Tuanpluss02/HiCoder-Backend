@@ -12,13 +12,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     @Override
     public User loadUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(HttpStatus.UNAUTHORIZED, "User is not authenticated"));
+                .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "User not found"));
     }
 
 
@@ -28,6 +29,8 @@ public class UserServiceImpl implements UserService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
         }
-        return loadUserByUsername(authentication.getName());
+        String username = authentication.getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "User not found"));
     }
 }

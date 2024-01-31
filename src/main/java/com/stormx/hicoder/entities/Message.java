@@ -1,7 +1,7 @@
 package com.stormx.hicoder.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 @Data
 @Entity
@@ -11,15 +11,15 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 }

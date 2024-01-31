@@ -1,12 +1,30 @@
+version: '3'
 services:
   mysql:
-    image: 'mysql:latest'
+    image: mysql:latest
     environment:
-      - 'MYSQL_DATABASE=hicoder'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - MYSQL_DATABASE=hicoder
+      - MYSQL_ROOT_PASSWORD=verysecret
     ports:
       - '3306:3306'
   redis:
-    image: 'redis:latest'
+    image: redis:latest
     ports:
       - '6379:6379'
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mysql
+      - redis
+  nginx:
+    image: nginx:latest
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - spring-app
