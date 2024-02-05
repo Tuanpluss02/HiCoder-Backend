@@ -1,12 +1,12 @@
 package com.stormx.hicoder.services;
 
+import com.stormx.hicoder.dto.NewPostDTO;
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.interfaces.PostService;
 import com.stormx.hicoder.repositories.PostRepository;
-import com.stormx.hicoder.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post createPost(PostDTO post, User user) {
+    public Post createPost(NewPostDTO post, User user) {
         Post newPost = Post.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
