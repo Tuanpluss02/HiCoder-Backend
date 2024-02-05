@@ -3,28 +3,26 @@ package com.stormx.hicoder.services;
 import com.stormx.hicoder.common.Role;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;
-import com.stormx.hicoder.dto.ResetPasswordDTO;
+import com.stormx.hicoder.dto.RequestResetPasswordDTO;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.interfaces.AuthenticationService;
 import com.stormx.hicoder.interfaces.EmailService;
+import com.stormx.hicoder.interfaces.RedisService;
 import com.stormx.hicoder.interfaces.TokenService;
 import com.stormx.hicoder.repositories.UserRepository;
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
+import org.thymeleaf.context.Context;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -37,9 +35,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final RedisService redisService;
 
     @Value("${auth.admin-key}")
-    private String adminKey;
+    private String ADMIN_KEY;
+    @Value("${token.reset-password.expiration}")
+    private Long RESETPWD_TOKEN_EXPIRATION;
 
     @Override
     public AuthenticationResponse register(AuthenticationRequest request) {
@@ -49,7 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Role userRole;
         if (role == null || role.isEmpty() || role.equals("USER")) userRole = Role.USER;
         else if (role.equals("ADMIN")) {
-            if (request.getAdminKey() == null || request.getAdminKey().isEmpty() || !request.getAdminKey().equals(adminKey))
+            if (request.getAdminKey() == null || request.getAdminKey().isEmpty() || !request.getAdminKey().equals(ADMIN_KEY))
                 throw new BadRequestException("Invalid admin key");
             userRole = Role.ADMIN;
         } else userRole = Role.USER;
@@ -93,17 +94,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void sendEmailResetPassword(ResetPasswordDTO resetPasswordDTO) {
-        try {
-            String email = resetPasswordDTO.getEmail();
-            ClassPathResource resource = new ClassPathResource("ResetPasswordTemplate.html");
-            byte[] fileBytes = new byte[0];
-            fileBytes = FileCopyUtils.copyToByteArray(resource.getFile());
-            String body = new String(fileBytes);
-            emailService.sendMail(email, "HiCoder | Reset password", body);
-        } catch (IOException | MessagingException e) {
-            throw new RuntimeException(e);
-        }
-
+    public void sendEmailResetPassword(RequestResetPasswordDTO requestResetPasswordDTO) {
+        Context context = new Context();
+        String token = tokenService.generateResetPasswordToken();
+        context.setVariable("reset-link", "http://localhost:3000/reset-password?token=" + token);
+        redisService.saveToken(token, RESETPWD_TOKEN_EXPIRATION, requestResetPasswordDTO.getEmail());
+        emailService.sendEmailWithHtml(requestResetPasswordDTO.getEmail(), "HiCoder | Reset password", "email-template", context);
     }
 }

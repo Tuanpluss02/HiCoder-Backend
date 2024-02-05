@@ -1,4 +1,4 @@
-package com.stormx.hicoder.configuration;
+package com.stormx.hicoder.filter;
 
 import com.stormx.hicoder.interfaces.LoggingService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +28,6 @@ public class CustomRequestBodyAdviceAdapter extends RequestBodyAdviceAdapter {
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
         loggingService.logRequest(httpServletRequest, body);
-
         return super.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
     }
 }

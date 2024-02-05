@@ -1,6 +1,5 @@
 package com.stormx.hicoder.controllers;
 
-import com.stormx.hicoder.dto.NewPostDTO;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
@@ -35,15 +34,6 @@ public class PostController {
         return postService.getAllPostsOfUser(currentUser);
     }
 
-    @PostMapping("/new")
-    public Post newPost(@Valid NewPostDTO newPostDTO){
-        UserDTO currentUserDTO = userService.getCurrentUser();
-        User currentUser = User.builder()
-                .id(currentUserDTO.getId())
-                .username(currentUserDTO.getUsername())
-                .email(currentUserDTO.getEmail())
-                .role(currentUserDTO.getRole())
-                .build();
-        return postService.createPost(newPostDTO, currentUser);
-    }
+//    @PostMapping("/new")
+//    public Post newPost(@Valid )
 }

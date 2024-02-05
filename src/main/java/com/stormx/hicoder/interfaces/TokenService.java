@@ -1,7 +1,6 @@
 package com.stormx.hicoder.interfaces;
 
 import com.stormx.hicoder.dto.UserDTO;
-import com.stormx.hicoder.entities.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
@@ -14,4 +13,6 @@ public interface TokenService {
     void saveRefreshToken(String token, UserDTO userDetails);
 
     UserDTO isRefreshTokenValid(String refreshToken);
+
+    String generateResetPasswordToken();
 }

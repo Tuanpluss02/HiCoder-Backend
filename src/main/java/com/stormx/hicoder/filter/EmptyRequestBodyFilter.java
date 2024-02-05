@@ -1,4 +1,4 @@
-package com.stormx.hicoder.configuration;
+package com.stormx.hicoder.filter;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +38,7 @@ public class EmptyRequestBodyFilter implements Filter {
                 servletResponse.setContentType("application/json");
                 servletResponse.setCharacterEncoding("UTF-8");
                 ((HttpServletResponse) servletResponse).setStatus(400);
-                new ObjectMapper().writeValue(servletResponse.getOutputStream(), new ErrorResponse(HttpStatus.BAD_REQUEST, "Request body is empty"));
+                new ObjectMapper().writeValue(servletResponse.getOutputStream(), new ErrorResponse(HttpStatus.BAD_REQUEST, "Request body is empty", servletPath));
                 return;
             }
         }

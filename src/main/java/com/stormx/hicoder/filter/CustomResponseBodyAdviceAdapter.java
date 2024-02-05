@@ -1,4 +1,4 @@
-package com.stormx.hicoder.configuration;
+package com.stormx.hicoder.filter;
 
 import com.stormx.hicoder.interfaces.LoggingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,6 @@ public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Objec
                     ((ServletServerHttpRequest) serverHttpRequest).getServletRequest(),
                     ((ServletServerHttpResponse) serverHttpResponse).getServletResponse(), o);
         }
-
         return o;
     }
 }
