@@ -5,10 +5,10 @@ services:
       - 'MYSQL_DATABASE=hicoder'
       - 'MYSQL_ROOT_PASSWORD=verysecret'
     ports:
-      - '3306'
+      - '3306:3306'
   redis:
     image: 'redis:latest'
     ports:
-      - '6379'
-  backend:
-    image: 'hicoder-backend:latest'
+      - '6379:6379'
+#  backend:
+#    image: 'hicoder-backend:latest'

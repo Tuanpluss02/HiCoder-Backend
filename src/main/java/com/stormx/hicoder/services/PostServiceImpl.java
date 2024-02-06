@@ -1,6 +1,5 @@
 package com.stormx.hicoder.services;
 
-import com.stormx.hicoder.dto.NewPostDTO;
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
@@ -28,7 +27,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post createPost(NewPostDTO post, User user) {
+    public Post createPost(PostDTO post, User user) {
         Post newPost = Post.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -36,6 +35,7 @@ public class PostServiceImpl implements PostService {
                 .build();
         return postRepository.save(newPost);
     }
+
 
     @Override
     public Post updatePost(String postId, PostDTO postDetails) {
