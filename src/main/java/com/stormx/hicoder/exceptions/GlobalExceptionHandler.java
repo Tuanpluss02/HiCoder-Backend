@@ -11,6 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,7 +20,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({AppException.class})
     public ResponseEntity<?> handlerAppException(AppException e, HttpServletRequest request) {
         logger.error("AppException: " + e.getLocalizedMessage());
-//        return new ErrorResponse(e.getStatusCode(), e.getLocalizedMessage(), request.getRequestURI());
         return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponse(e.getStatusCode(), e.getLocalizedMessage(), request.getRequestURI()));
     }
 
@@ -33,27 +33,36 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({BadCredentialsException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadCredentialException(BadCredentialsException exception, HttpServletRequest request) {
-        logger.error("Bad Credential: " + exception.getLocalizedMessage() );
+        logger.error("Bad Credential: " + exception.getLocalizedMessage());
         return new ErrorResponse(HttpStatus.BAD_REQUEST, "Email or password is incorrect", request.getRequestURI());
     }
+
     @ExceptionHandler({BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(BadRequestException exception, HttpServletRequest request) {
-        logger.error("Bad Request: " + exception.getLocalizedMessage() );
+        logger.error("Bad Request: " + exception.getLocalizedMessage());
         return new ErrorResponse(HttpStatus.BAD_REQUEST, exception.getLocalizedMessage(), request.getRequestURI());
     }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNoResourceFoundException(NoHandlerFoundException exception, HttpServletRequest request) {
+        logger.error("Resource Not Found: " + exception.getLocalizedMessage());
+        return new ErrorResponse(HttpStatus.NOT_FOUND, exception.getLocalizedMessage(), request.getRequestURI());
+    }
+
 
     @ExceptionHandler({RuntimeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleRuntimeException(RuntimeException exception, HttpServletRequest request) {
-        logger.error("Runtime Error: " + exception.getLocalizedMessage() );
+        logger.error("Runtime Error: " + exception.getLocalizedMessage());
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong", request.getRequestURI());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleUnwantedException(Exception e, HttpServletRequest request) {
-        logger.error("Unknown error: "  +  e.getLocalizedMessage());
+        logger.error("Unknown error: " + e.getLocalizedMessage());
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ops! Have an unknown error", request.getRequestURI());
     }
 }
