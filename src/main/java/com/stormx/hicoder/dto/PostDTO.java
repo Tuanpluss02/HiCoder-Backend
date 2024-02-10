@@ -1,23 +1,28 @@
 package com.stormx.hicoder.dto;
 
-import com.stormx.hicoder.entities.Post;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class PostDTO {
-    private String id;
+    @NotBlank(message = "Title is required")
+    @NotEmpty(message = "Title is required")
+    @NotNull(message = "Title is required")
+    @Size(min = 5, message = "Title must be at least 5 characters")
     private String title;
-    private String content;
 
-    public PostDTO(Post post) {
-        this.id = post.getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-    }
+    @NotBlank(message = "Content is required")
+    @NotEmpty(message = "Content is required")
+    @NotNull(message = "Content is required")
+    @Size(min = 10, message = "Content must be at least 10 characters")
+    private String content;
 }

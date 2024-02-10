@@ -1,9 +1,8 @@
 package com.stormx.hicoder.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
-@Data
+
 @Entity
 @Table(name = "messages")
 public class Message {

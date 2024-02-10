@@ -33,19 +33,17 @@ public class PostServiceImpl implements PostService {
                 .content(post.getContent())
                 .user(user)
                 .build();
-        return postRepository.save(newPost);
+        postRepository.save(newPost);
+        return newPost;
     }
 
 
     @Override
     public Post updatePost(String postId, PostDTO postDetails) {
         Post post = getPostById(postId);
-        if (post != null) {
-            post.setTitle(postDetails.getTitle());
-            post.setContent(postDetails.getContent());
-            return postRepository.save(post);
-        }
-        return null;
+        post.setTitle(postDetails.getTitle());
+        post.setContent(postDetails.getContent());
+        return postRepository.save(post);
     }
 
     @Override

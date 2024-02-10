@@ -39,21 +39,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    private static final String[] WHITE_LIST_URL = {
-            "/api/v1/auth",
-            "/h2-console",
-            "/swagger-resources",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/swagger-ui/index.html"
+    private static final String[] WHITE_LIST_REGEX = {
+            "^/api/v1/user/.*",
+            "^/api/v1/post/.*",
     };
-
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String servletPath = request.getServletPath();
-        if (Arrays.stream(WHITE_LIST_URL).anyMatch(servletPath::startsWith)) {
+        if (Arrays.stream(WHITE_LIST_REGEX).noneMatch(servletPath::matches)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -70,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             User user = userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));
             Collection<SimpleGrantedAuthority> authorities = Arrays.stream(decodedJWT.getClaim("roles").asArray(String.class)).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null, authorities));
+            response.setContentType(APPLICATION_JSON_VALUE);
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             response.setStatus(UNAUTHORIZED.value());

@@ -21,8 +21,9 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/v1/auth",
         consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-@CrossOrigin(origins = "*")
+        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+//@CrossOrigin(origins = "*")
 public class AuthenticationController {
 
     @Autowired
@@ -40,7 +41,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Register successfully", request.getRequestURI(), authenticationService.register(authenticationRequest)));
     }
 
-    @PostMapping("send-mail-rspwd")
+    @PostMapping("/send-mail-rspwd")
     public ResponseEntity<?> sendEmailResetPassword(@Valid RequestResetPasswordDTO requestResetPasswordDTO, BindingResult bindingResult, HttpServletRequest request) throws ValidationException {
         checkValidRequest(bindingResult);
         authenticationService.sendEmailResetPassword(requestResetPasswordDTO);

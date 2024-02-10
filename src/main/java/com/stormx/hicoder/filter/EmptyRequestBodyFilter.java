@@ -21,7 +21,8 @@ public class EmptyRequestBodyFilter implements Filter {
             "/swagger-resources",
             "/configuration/ui",
             "/configuration/security",
-            "/swagger-ui.html"
+            "/swagger-ui.html",
+            "/swagger-ui/index.html"
     };
 
     @Override
