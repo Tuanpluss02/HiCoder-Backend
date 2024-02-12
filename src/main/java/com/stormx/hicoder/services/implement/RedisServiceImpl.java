@@ -1,7 +1,7 @@
-package com.stormx.hicoder.services;
+package com.stormx.hicoder.services.implement;
 
 import com.stormx.hicoder.dto.UserDTO;
-import com.stormx.hicoder.interfaces.RedisService;
+import com.stormx.hicoder.services.RedisService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +16,8 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void saveToken(String token, Long expireTime, UserDTO userDetails) {
-        redisTemplate.opsForValue().set(token, userDetails, expireTime, TimeUnit.MILLISECONDS);
+    public void saveToken(String token, Long expireTime, Object obj) {
+        redisTemplate.opsForValue().set(token, obj, expireTime, TimeUnit.MILLISECONDS);
     }
 
     @Override

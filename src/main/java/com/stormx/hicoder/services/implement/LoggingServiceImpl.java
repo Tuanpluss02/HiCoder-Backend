@@ -1,7 +1,7 @@
-package com.stormx.hicoder.services;
+package com.stormx.hicoder.services.implement;
 
 import com.stormx.hicoder.common.GsonParserUtils;
-import com.stormx.hicoder.interfaces.LoggingService;
+import com.stormx.hicoder.services.LoggingService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

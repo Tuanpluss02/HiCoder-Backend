@@ -1,5 +1,6 @@
-package com.stormx.hicoder.common;
+package com.stormx.hicoder.filter;
 
+import jakarta.servlet.FilterConfig;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,6 @@ public class CustomURLFilter implements Filter {
     }
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-
         String requestId = UUID.randomUUID().toString();
         servletRequest.setAttribute(REQUEST_ID, requestId);
         logRequest((HttpServletRequest) servletRequest, requestId);

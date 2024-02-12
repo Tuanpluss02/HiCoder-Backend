@@ -1,13 +1,16 @@
 package com.stormx.hicoder.common;
 
 
-import com.stormx.hicoder.interfaces.ResponseGeneral;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
+
 public class SuccessResponse extends ResponseGeneral {
-    public SuccessResponse(HttpStatus statusCode, String message, Object body) {
-        super(statusCode, message, body);
+    public SuccessResponse(HttpStatus status, String message, String path, Object body) {
+        super(LocalDateTime.now().toString(), path, status.value(), message, body);
     }
+
+//    public SuccessResponse(HttpStatus status, String message, Object body) {
+//        super(LocalDateTime.now().toString(), "", status.value(), message, body);
+//    }
 }

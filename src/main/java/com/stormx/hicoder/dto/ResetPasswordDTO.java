@@ -1,20 +1,20 @@
 package com.stormx.hicoder.dto;
 
-import jakarta.validation.constraints.Email;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResetPasswordDTO {
-    @Email
-    @NotNull(message = "Email is require")
-    @NotBlank(message = "Email is require")
-    String email;
+    @NotBlank(message = "Password is required")
+    @NotNull(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
+    private String newPassword;
 }
