@@ -1,10 +1,10 @@
-package com.stormx.hicoder.services;
+package com.stormx.hicoder.services.implement;
 
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
-import com.stormx.hicoder.interfaces.PostService;
+import com.stormx.hicoder.services.PostService;
 import com.stormx.hicoder.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

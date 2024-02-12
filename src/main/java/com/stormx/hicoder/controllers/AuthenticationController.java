@@ -4,7 +4,7 @@ import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.RequestResetPasswordDTO;
 import com.stormx.hicoder.exceptions.ValidationException;
-import com.stormx.hicoder.interfaces.AuthenticationService;
+import com.stormx.hicoder.services.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

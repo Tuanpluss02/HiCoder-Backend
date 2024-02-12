@@ -1,7 +1,7 @@
-package com.stormx.hicoder.services;
+package com.stormx.hicoder.services.implement;
 
 import com.stormx.hicoder.exceptions.AppException;
-import com.stormx.hicoder.interfaces.EmailService;
+import com.stormx.hicoder.services.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.http.HttpStatus;

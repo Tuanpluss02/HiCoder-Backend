@@ -1,6 +1,6 @@
 package com.stormx.hicoder.configuration;
 
-//import com.stormx.hicoder.filter.JwtAuthenticationFilter;
+import com.stormx.hicoder.filter.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static com.stormx.hicoder.common.Permission.*;
 import static com.stormx.hicoder.common.Role.ADMIN;
@@ -38,7 +39,7 @@ public class SecurityConfiguration {
             "/swagger-ui/**",
             "/swagger-ui.html"
     };
-    //    private final JwtAuthenticationFilter jwtAuthFilter;
+        private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
 
@@ -58,8 +59,8 @@ public class SecurityConfiguration {
                                 .authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                .authenticationProvider(authenticationProvider);
-//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

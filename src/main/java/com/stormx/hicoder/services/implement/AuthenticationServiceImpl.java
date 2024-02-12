@@ -1,4 +1,4 @@
-package com.stormx.hicoder.services;
+package com.stormx.hicoder.services.implement;
 
 import com.stormx.hicoder.common.Role;
 import com.stormx.hicoder.dto.AuthenticationRequest;
@@ -7,10 +7,10 @@ import com.stormx.hicoder.dto.RequestResetPasswordDTO;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
-import com.stormx.hicoder.interfaces.AuthenticationService;
-import com.stormx.hicoder.interfaces.EmailService;
-import com.stormx.hicoder.interfaces.RedisService;
-import com.stormx.hicoder.interfaces.TokenService;
+import com.stormx.hicoder.services.AuthenticationService;
+import com.stormx.hicoder.services.EmailService;
+import com.stormx.hicoder.services.RedisService;
+import com.stormx.hicoder.services.TokenService;
 import com.stormx.hicoder.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

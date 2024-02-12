@@ -1,7 +1,6 @@
 package com.stormx.hicoder.common;
 
 
-import com.stormx.hicoder.interfaces.ResponseGeneral;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;

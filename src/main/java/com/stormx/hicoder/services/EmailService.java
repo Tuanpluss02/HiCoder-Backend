@@ -1,4 +1,4 @@
-package com.stormx.hicoder.interfaces;
+package com.stormx.hicoder.services;
 
 import org.thymeleaf.context.Context;
 

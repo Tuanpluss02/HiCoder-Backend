@@ -2,8 +2,8 @@ package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.entities.User;
-import com.stormx.hicoder.interfaces.ResponseGeneral;
-import com.stormx.hicoder.interfaces.UserService;
+import com.stormx.hicoder.common.ResponseGeneral;
+import com.stormx.hicoder.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

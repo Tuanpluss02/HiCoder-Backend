@@ -1,4 +1,4 @@
-package com.stormx.hicoder.interfaces;
+package com.stormx.hicoder.services;
 
 import com.stormx.hicoder.dto.AuthenticationRequest;
 import com.stormx.hicoder.dto.AuthenticationResponse;

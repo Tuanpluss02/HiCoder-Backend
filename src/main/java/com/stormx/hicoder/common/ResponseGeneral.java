@@ -1,4 +1,4 @@
-package com.stormx.hicoder.interfaces;
+package com.stormx.hicoder.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

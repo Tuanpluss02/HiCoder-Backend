@@ -1,6 +1,6 @@
 package com.stormx.hicoder.filter;
 
-import com.stormx.hicoder.interfaces.LoggingService;
+import com.stormx.hicoder.services.LoggingService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;

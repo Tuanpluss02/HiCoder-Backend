@@ -1,7 +1,7 @@
-package com.stormx.hicoder.services;
+package com.stormx.hicoder.services.implement;
 
 import com.stormx.hicoder.dto.UserDTO;
-import com.stormx.hicoder.interfaces.RedisService;
+import com.stormx.hicoder.services.RedisService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
