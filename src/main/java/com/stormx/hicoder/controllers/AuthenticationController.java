@@ -65,7 +65,7 @@ public class AuthenticationController {
     private static void checkValidRequest(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
-            throw new ValidationException(errors.getFirst());
+            throw new ValidationException(errors.get(0));
         }
     }
 

@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HiCoderApplication {
+public class HiCoderBackendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(HiCoderApplication.class, args);
+        SpringApplication.run(HiCoderBackendApplication.class, args);
     }
 
 }
