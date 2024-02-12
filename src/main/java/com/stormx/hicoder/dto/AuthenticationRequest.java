@@ -17,9 +17,8 @@ public class AuthenticationRequest {
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
-    @Pattern(regexp = "^(ADMIN|USER)$", message = "Role must be either ADMIN or USER")
+    @Pattern(regexp = "^(ADMIN|USER)?$", message = "Role must be either ADMIN or USER")
     private String role;
-
 
     private String adminKey;
 }
