@@ -13,7 +13,6 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
-@ToString
 @Table(name = "posts")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -52,4 +51,14 @@ public class Post {
     )
     private List<User> likedByUsers;
 
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", user=" + user +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }

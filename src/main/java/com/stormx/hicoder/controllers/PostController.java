@@ -1,12 +1,12 @@
 package com.stormx.hicoder.controllers;
 
+import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.services.PostService;
-import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController()
@@ -46,13 +47,15 @@ public class PostController {
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user's posts successfully", request.getRequestURI(), userPosts));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<SuccessResponse> newPost(@Valid PostDTO postDTO, HttpServletRequest request) {
+    @PostMapping()
+    public ResponseEntity<?> newPost(@Valid PostDTO postDTO, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Create new post successfully", request.getRequestURI(), postService.createPost(postDTO, currentUser)));
+        Post newPost = postService.createPost(postDTO, currentUser);
+        return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), null));
+//        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Create new post successfully", request.getRequestURI(), postService.createPost(postDTO, currentUser)));
     }
 
-    @PutMapping("/update/{postId}")
+    @PutMapping("/{postId}")
     public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid PostDTO postDTO, HttpServletRequest request, BindingResult bindingResult) {
         checkValidRequest(bindingResult);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), postService.updatePost(postId, postDTO)));

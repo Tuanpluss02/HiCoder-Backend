@@ -4,8 +4,8 @@ import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
-import com.stormx.hicoder.services.PostService;
 import com.stormx.hicoder.repositories.PostRepository;
+import com.stormx.hicoder.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +33,7 @@ public class PostServiceImpl implements PostService {
                 .content(post.getContent())
                 .user(user)
                 .build();
-        postRepository.save(newPost);
-        return newPost;
+        return postRepository.save(newPost);
     }
 
 
