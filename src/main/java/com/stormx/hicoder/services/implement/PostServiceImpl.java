@@ -55,5 +55,4 @@ public class PostServiceImpl implements PostService {
         }
         return false;
     }
-
 }

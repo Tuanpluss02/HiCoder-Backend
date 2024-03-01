@@ -48,7 +48,6 @@ public class User  implements UserDetails {
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
     private List<Message> receivedMessages = new ArrayList<>();
 
-
     @JsonIgnore
     @ManyToMany(mappedBy = "likedByUsers")
     private List<Post> likedPosts = new ArrayList<>();

@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<SuccessResponse> newPost(@Valid PostDTO postDTO, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> newPost(@Validated PostDTO postDTO, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Create new post successfully", request.getRequestURI(), postService.createPost(postDTO, currentUser)));
     }

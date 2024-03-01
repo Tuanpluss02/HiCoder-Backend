@@ -68,5 +68,4 @@ public class AuthenticationController {
             throw new ValidationException(errors.get(0));
         }
     }
-
 }
