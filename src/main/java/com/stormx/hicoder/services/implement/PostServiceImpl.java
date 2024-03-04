@@ -48,11 +48,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public boolean deletePost(String postId) {
         Post post = getPostById(postId);
-        if (post != null) {
-            postRepository.delete(post);
-            return true;
-        }
-        return false;
+        postRepository.delete(post);
+        return true;
     }
 
 }
