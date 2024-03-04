@@ -27,10 +27,11 @@ public class Post {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
     @JsonIgnore
-    private User user;
+    private User author;
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
@@ -51,13 +52,38 @@ public class Post {
     )
     private List<User> likedByUsers;
 
+    public void addLike(User user) {
+        this.likedByUsers.add(user);
+    }
+
+    public void removeLike(User user) {
+        this.likedByUsers.remove(user);
+    }
+
+    public boolean isLikedBy(User user) {
+        return this.likedByUsers.contains(user);
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
+
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
+    }
+
+    public boolean isCommentedBy(Comment comment) {
+        return this.comments.contains(comment);
+    }
+
+
     @Override
     public String toString() {
         return "Post{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", user=" + user +
+                ", user=" + author +
                 ", createdAt=" + createdAt +
                 '}';
     }

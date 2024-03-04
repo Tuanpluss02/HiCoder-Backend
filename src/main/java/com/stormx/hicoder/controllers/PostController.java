@@ -46,6 +46,7 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<SuccessResponse> deletePost(@PathVariable String postId, HttpServletRequest request) {
+        User currentUser = userService.getCurrentUser();
         postService.deletePost(postId);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Delete post successfully", request.getRequestURI(), null));
     }

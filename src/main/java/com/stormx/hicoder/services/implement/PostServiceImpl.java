@@ -5,16 +5,18 @@ import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.PostRepository;
+import com.stormx.hicoder.repositories.UserRepository;
 import com.stormx.hicoder.services.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<Post> getAllPostsOfUser(User user) {
@@ -31,8 +33,9 @@ public class PostServiceImpl implements PostService {
         Post newPost = Post.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
-                .user(user)
+                .author(user)
                 .build();
+
         return postRepository.save(newPost);
     }
 
