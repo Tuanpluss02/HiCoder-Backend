@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @Getter
 @Table(name = "messages")
-@Getter
-@Setter
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
