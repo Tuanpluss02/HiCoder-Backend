@@ -2,6 +2,7 @@ package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.requests.AuthenticationRequest;
+import com.stormx.hicoder.controllers.requests.AuthenticationResponse;
 import com.stormx.hicoder.controllers.requests.ResetPasswordRequest;
 import com.stormx.hicoder.services.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,13 +23,14 @@ public class AuthenticationController {
 
     @PostMapping(path = "/login")
     public ResponseEntity<?> userLogin(@RequestBody @Valid AuthenticationRequest authenticationRequest, HttpServletRequest request) {
-
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Login successfully", request.getRequestURI(), authenticationService.authenticate(authenticationRequest)));
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(authenticationRequest);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Login successfully", request.getRequestURI(), authenticationResponse));
     }
 
     @PostMapping(path = "/register")
     public ResponseEntity<?> userRegister(@RequestBody @Valid AuthenticationRequest authenticationRequest, HttpServletRequest request) {
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Register successfully", request.getRequestURI(), authenticationService.register(authenticationRequest)));
+        AuthenticationResponse authenticationResponse = authenticationService.register(authenticationRequest);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Register successfully", request.getRequestURI(), authenticationResponse));
     }
 
     @PostMapping("/send-mail-rspwd")

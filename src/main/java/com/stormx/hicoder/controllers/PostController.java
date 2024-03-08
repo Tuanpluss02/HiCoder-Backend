@@ -1,9 +1,8 @@
 package com.stormx.hicoder.controllers;
 
-import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.requests.NewPostRequest;
-import com.stormx.hicoder.entities.Post;
+import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.PostService;
 import com.stormx.hicoder.services.UserService;
@@ -26,9 +25,9 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/me")
-    public ResponseEntity<ResponseGeneral> getCurrentUserPosts(HttpServletRequest request) {
+    public ResponseEntity<?> getCurrentUserPosts(HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        List<Post> userPosts = postService.getAllPostsOfUser(currentUser);
+        List<PostDTO> userPosts = postService.getAllPostsOfUser(currentUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user's posts successfully", request.getRequestURI(), userPosts));
     }
 

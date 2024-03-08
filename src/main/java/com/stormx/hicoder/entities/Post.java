@@ -53,6 +53,9 @@ public class Post {
     )
     private List<User> likedByUsers;
 
+    public boolean isPostedBy(User user) {
+        return this.author.equals(user);
+    }
     public void addLike(User user) {
         this.likedByUsers.add(user);
     }
@@ -83,12 +86,14 @@ public class Post {
     }
     @Override
     public String toString() {
+
         return "Post{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", user=" + author +
+                ", author=" + author.getId() +
                 ", createdAt=" + createdAt +
                 '}';
     }
+
 }

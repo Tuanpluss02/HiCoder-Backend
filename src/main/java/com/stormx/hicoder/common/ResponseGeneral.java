@@ -6,10 +6,10 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public abstract class ResponseGeneral {
+public abstract class ResponseGeneral<T> {
     protected String timestamp;
     protected String path;
     protected int status;
     protected String message;
-    protected Object body;
+    protected T body;
 }
