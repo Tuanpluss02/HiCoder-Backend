@@ -1,27 +1,23 @@
 package com.stormx.hicoder.controllers;
 
+import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.entities.User;
-import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "api/v1/user",
-        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-)
+@RequestMapping(path = "api/v1/user")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping("/me")
     ResponseEntity<ResponseGeneral> getCurrentUserDetail(HttpServletRequest request) {

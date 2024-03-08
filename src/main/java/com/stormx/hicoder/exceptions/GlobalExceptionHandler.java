@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,6 +24,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(e.getStatusCode()).body(new ErrorResponse(e.getStatusCode(), e.getLocalizedMessage(), request.getRequestURI()));
     }
 
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ResponseEntity<?> handleException(MethodArgumentNotValidException e) {
+        logger.error("Validation Error: " + e.getLocalizedMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e.getBindingResult().getAllErrors().get(0).getDefaultMessage(), ""));
+    }
     @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(ValidationException ex, HttpServletRequest request) {

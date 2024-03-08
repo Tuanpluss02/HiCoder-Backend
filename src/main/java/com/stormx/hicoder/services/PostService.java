@@ -1,6 +1,6 @@
 package com.stormx.hicoder.services;
 
-import com.stormx.hicoder.dto.PostDTO;
+import com.stormx.hicoder.controllers.requests.NewPostRequest;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 
@@ -11,9 +11,9 @@ public interface PostService {
 
     Post getPostById(String postId);
 
-    Post createPost(PostDTO post, User user);
+    Post createPost(NewPostRequest post, User user);
 
-    Post updatePost(String postId, PostDTO postDetails);
+    Post updatePost(String postId, NewPostRequest postDetails);
 
     boolean deletePost(String postId);
 }

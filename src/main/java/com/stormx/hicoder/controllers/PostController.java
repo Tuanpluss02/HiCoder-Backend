@@ -2,43 +2,28 @@ package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.dto.PostDTO;
+import com.stormx.hicoder.controllers.requests.NewPostRequest;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
-import com.stormx.hicoder.exceptions.ValidationException;
 import com.stormx.hicoder.services.PostService;
 import com.stormx.hicoder.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
 @RestController()
-@RequestMapping(path = "api/v1/post",
-        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-)
-//@CrossOrigin(origins = "*")
+@RequestMapping(path = "api/v1/post")
+@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class PostController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private PostService postService;
-
-    private static void checkValidRequest(BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
-            throw new ValidationException(errors.get(0));
-        }
-    }
+    private final UserService userService;
+    private final PostService postService;
 
     @GetMapping("/me")
     public ResponseEntity<ResponseGeneral> getCurrentUserPosts(HttpServletRequest request) {
@@ -48,16 +33,21 @@ public class PostController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> newPost(@Valid PostDTO postDTO, HttpServletRequest request) {
+    public ResponseEntity<?> newPost(@Valid @RequestBody NewPostRequest newPostRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        Post newPost = postService.createPost(postDTO, currentUser);
+        Post newPost = postService.createPost(newPostRequest, currentUser);
         return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), null));
-//        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Create new post successfully", request.getRequestURI(), postService.createPost(postDTO, currentUser)));
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid PostDTO postDTO, HttpServletRequest request, BindingResult bindingResult) {
-        checkValidRequest(bindingResult);
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), postService.updatePost(postId, postDTO)));
+    public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid NewPostRequest newPostRequest, HttpServletRequest request) {
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), postService.updatePost(postId, newPostRequest)));
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<SuccessResponse> deletePost(@PathVariable String postId, HttpServletRequest request) {
+        User currentUser = userService.getCurrentUser();
+        postService.deletePost(postId);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Delete post successfully", request.getRequestURI(), null));
     }
 }

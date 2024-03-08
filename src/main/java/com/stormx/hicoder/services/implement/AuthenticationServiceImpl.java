@@ -1,17 +1,17 @@
 package com.stormx.hicoder.services.implement;
 
 import com.stormx.hicoder.common.Role;
-import com.stormx.hicoder.dto.AuthenticationRequest;
-import com.stormx.hicoder.dto.AuthenticationResponse;
-import com.stormx.hicoder.dto.RequestResetPasswordDTO;
+import com.stormx.hicoder.controllers.requests.AuthenticationRequest;
+import com.stormx.hicoder.controllers.requests.AuthenticationResponse;
+import com.stormx.hicoder.controllers.requests.ResetPasswordRequest;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
+import com.stormx.hicoder.repositories.UserRepository;
 import com.stormx.hicoder.services.AuthenticationService;
 import com.stormx.hicoder.services.EmailService;
 import com.stormx.hicoder.services.RedisService;
 import com.stormx.hicoder.services.TokenService;
-import com.stormx.hicoder.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -94,11 +94,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void sendEmailResetPassword(RequestResetPasswordDTO requestResetPasswordDTO) {
+    public void sendEmailResetPassword(ResetPasswordRequest resetPasswordRequest) {
         Context context = new Context();
         String token = tokenService.generateResetPasswordToken();
         context.setVariable("reset-link", "http://localhost:3000/reset-password?token=" + token);
-        redisService.saveToken(token, RESETPWD_TOKEN_EXPIRATION, requestResetPasswordDTO.getEmail());
-        emailService.sendEmailWithHtml(requestResetPasswordDTO.getEmail(), "HiCoder | Reset password", "email-template", context);
+        redisService.saveToken(token, RESETPWD_TOKEN_EXPIRATION, resetPasswordRequest.getEmail());
+        emailService.sendEmailWithHtml(resetPasswordRequest.getEmail(), "HiCoder | Reset password", "email-template", context);
     }
 }

@@ -6,6 +6,8 @@ import lombok.Setter;
 
 
 @Entity
+@Setter
+@Getter
 @Table(name = "messages")
 @Getter
 @Setter
@@ -25,4 +27,5 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
+
 }
