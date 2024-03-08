@@ -1,10 +1,14 @@
 package com.stormx.hicoder.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 
 @Entity
 @Table(name = "messages")
+@Getter
+@Setter
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
