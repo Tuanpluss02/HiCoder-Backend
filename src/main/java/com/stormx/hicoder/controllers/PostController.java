@@ -31,18 +31,25 @@ public class PostController {
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user's posts successfully", request.getRequestURI(), userPosts));
     }
 
+    @GetMapping("/{postId}")
+    public ResponseEntity<?> getUserPostById(@PathVariable String postId, HttpServletRequest request) {
+        User currentUser = userService.getCurrentUser();
+        PostDTO userPosts = postService.getUserPostById(postId, currentUser);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user's posts successfully", request.getRequestURI(), userPosts));
+    }
+
     @PostMapping()
     public ResponseEntity<?> newPost(@Valid @RequestBody NewPostRequest newPostRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        postService.createPost(newPostRequest, currentUser);
-        return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), null));
+        PostDTO createdPost = postService.createPost(newPostRequest, currentUser);
+        return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), createdPost));
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid NewPostRequest newPostRequest, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid @RequestBody NewPostRequest newPostRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        postService.updatePost(postId, newPostRequest, currentUser);
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), null));
+        PostDTO updatedPost = postService.updatePost(postId, newPostRequest, currentUser);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), updatedPost));
     }
 
     @DeleteMapping("/{postId}")

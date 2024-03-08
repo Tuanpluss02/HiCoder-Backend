@@ -12,9 +12,11 @@ public interface PostService {
 
     Post getPostById(String postId);
 
-    void createPost(NewPostRequest post, User user);
+    PostDTO getUserPostById(String postId, User currentUser);
 
-    void updatePost(String postId, NewPostRequest postDetails, User currentUser);
+    PostDTO createPost(NewPostRequest post, User user);
+
+    PostDTO updatePost(String postId, NewPostRequest postDetails, User currentUser);
 
     void deletePost(String postId, User currentUser);
 }

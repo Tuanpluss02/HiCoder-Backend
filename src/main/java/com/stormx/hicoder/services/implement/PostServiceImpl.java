@@ -32,23 +32,37 @@ public class PostServiceImpl implements PostService {
         return postRepository.findById(postId).orElseThrow(() -> new BadRequestException("Post not found id: " + postId));
     }
 
+
     @Override
-    public void createPost(NewPostRequest newPostRequest, User user) {
+    public PostDTO getUserPostById(String postId, User currentUser) {
+        Post userPost = getPostById(postId);
+        if (!userPost.isPostedBy(currentUser)) {
+            throw new BadRequestException("User doesn't have post: " + postId);
+        }
+        return new PostDTO(userPost);
+    }
+
+    @Override
+    public PostDTO createPost(NewPostRequest newPostRequest, User user) {
         Post newPost = new Post(newPostRequest);
         newPost.setAuthor(user);
         user.addPost(newPost);
         userRepository.save(user);
         postRepository.save(newPost);
+        return new PostDTO(newPost);
     }
 
 
     @Override
-    public void updatePost(String postId, NewPostRequest postDetails, User currentUser) {
-        Post oldPost = getPostById(postId);
-        if (!oldPost.isPostedBy(currentUser)) {
+    public PostDTO updatePost(String postId, NewPostRequest postDetails, User currentUser) {
+        Post userPosts = getPostById(postId);
+        if (!userPosts.isPostedBy(currentUser)) {
             throw new BadRequestException("User doesn't have post: " + postId);
         }
-        postRepository.save(oldPost);
+        userPosts.setTitle(postDetails.getTitle());
+        userPosts.setContent(postDetails.getContent());
+        postRepository.save(userPosts);
+        return new PostDTO(userPosts);
     }
 
     @Override
