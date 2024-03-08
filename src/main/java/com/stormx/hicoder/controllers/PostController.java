@@ -35,19 +35,21 @@ public class PostController {
     @PostMapping()
     public ResponseEntity<?> newPost(@Valid @RequestBody NewPostRequest newPostRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        Post newPost = postService.createPost(newPostRequest, currentUser);
+        postService.createPost(newPostRequest, currentUser);
         return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), null));
     }
 
     @PutMapping("/{postId}")
     public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid NewPostRequest newPostRequest, HttpServletRequest request) {
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), postService.updatePost(postId, newPostRequest)));
+        User currentUser = userService.getCurrentUser();
+        postService.updatePost(postId, newPostRequest, currentUser);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), null));
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<SuccessResponse> deletePost(@PathVariable String postId, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        postService.deletePost(postId);
+        postService.deletePost(postId, currentUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Delete post successfully", request.getRequestURI(), null));
     }
 }

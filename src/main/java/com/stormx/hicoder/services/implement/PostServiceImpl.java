@@ -20,7 +20,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getAllPostsOfUser(User user) {
-        return postRepository.findAllByUser(user);
+        return postRepository.findAllByAuthor(user);
     }
 
     @Override
@@ -29,30 +29,32 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post createPost(NewPostRequest post, User user) {
-        Post newPost = Post.builder()
-                .title(post.getTitle())
-                .content(post.getContent())
-                .author(user)
-                .build();
-
-        return postRepository.save(newPost);
+    public void createPost(NewPostRequest newPostRequest, User user) {
+        Post newPost = new Post(newPostRequest);
+        newPost.setAuthor(user);
+        user.addPost(newPost);
+        userRepository.save(user);
+        postRepository.save(newPost);
     }
 
 
     @Override
-    public Post updatePost(String postId, NewPostRequest postDetails) {
-        Post post = getPostById(postId);
-        post.setTitle(postDetails.getTitle());
-        post.setContent(postDetails.getContent());
-        return postRepository.save(post);
+    public void updatePost(String postId, NewPostRequest postDetails, User currentUser) {
+        Post oldPost = getPostById(postId);
+//        if(!currentUser.isPostedBy(oldPost)){
+//            throw new BadRequestException("User doesn't have post: " + postId);
+//        }
+        postRepository.save(oldPost);
     }
 
     @Override
-    public boolean deletePost(String postId) {
+    public void deletePost(String postId, User currentUser) {
         Post post = getPostById(postId);
+//        if(!currentUser.isPostedBy(post)){
+//            throw new BadRequestException("User doesn't have post: " + postId);
+//        }
         postRepository.delete(post);
-        return true;
+//        currentUser.removePost(post);
     }
 
 }

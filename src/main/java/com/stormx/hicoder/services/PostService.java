@@ -11,9 +11,9 @@ public interface PostService {
 
     Post getPostById(String postId);
 
-    Post createPost(NewPostRequest post, User user);
+    void createPost(NewPostRequest post, User user);
 
-    Post updatePost(String postId, NewPostRequest postDetails);
+    void updatePost(String postId, NewPostRequest postDetails, User currentUser);
 
-    boolean deletePost(String postId);
+    void deletePost(String postId, User currentUser);
 }
