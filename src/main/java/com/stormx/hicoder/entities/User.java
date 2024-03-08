@@ -3,7 +3,10 @@ package com.stormx.hicoder.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.stormx.hicoder.common.Role;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,7 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@ToString
 @Table(name = "users")
 public class User  implements UserDetails {
     @Id
@@ -37,7 +39,7 @@ public class User  implements UserDetails {
     private String email;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
 
     @JsonIgnore
@@ -50,11 +52,11 @@ public class User  implements UserDetails {
 
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "likedByUsers")
+    @ManyToMany(mappedBy = "likedByUsers", cascade = CascadeType.ALL)
     private List<Post> likedPosts = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "likedByUsers")
+    @ManyToMany(mappedBy = "likedByUsers", cascade = CascadeType.ALL)
     private List<Comment> likedComments = new ArrayList<>();
 
     @Getter
@@ -87,4 +89,74 @@ public class User  implements UserDetails {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                '}';
+    }
+
+    public void addPost(Post post) {
+        this.posts.add(post);
+    }
+
+    public void removePost(Post post) {
+        this.posts.remove(post);
+    }
+
+    public boolean isPostedBy(Post post) {
+        return this.posts.contains(post);
+    }
+
+    public void addLikedPost(Post post) {
+        this.likedPosts.add(post);
+    }
+
+    public void removeLikedPost(Post post) {
+        this.likedPosts.remove(post);
+    }
+
+    public boolean isLikedPost(Post post) {
+        return this.likedPosts.contains(post);
+    }
+
+    public void addLikedComment(Comment comment) {
+        this.likedComments.add(comment);
+    }
+
+    public void removeLikedComment(Comment comment) {
+        this.likedComments.remove(comment);
+    }
+
+    public boolean isLikedComment(Comment comment) {
+        return this.likedComments.contains(comment);
+    }
+
+    public void addSentMessage(Message message) {
+        this.sentMessages.add(message);
+    }
+
+    public void removeSentMessage(Message message) {
+        this.sentMessages.remove(message);
+    }
+
+    public boolean isSentMessage(Message message) {
+        return this.sentMessages.contains(message);
+    }
+
+    public void addReceivedMessage(Message message) {
+        this.receivedMessages.add(message);
+    }
+
+    public void removeReceivedMessage(Message message) {
+        this.receivedMessages.remove(message);
+    }
+
+    public boolean isReceivedMessage(Message message) {
+        return this.receivedMessages.contains(message);
+    }
 }

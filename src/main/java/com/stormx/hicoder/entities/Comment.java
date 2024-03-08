@@ -2,6 +2,7 @@ package com.stormx.hicoder.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +17,13 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne 
+    @ManyToOne
+    @Setter
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User author;
 
-    @ManyToOne 
+    @ManyToOne
+    @Setter
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
@@ -32,4 +35,13 @@ public class Comment {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> likedByUsers = new ArrayList<>();
+
+    public void addLike(User user) {
+        this.likedByUsers.add(user);
+    }
+
+    public void removeLike(User user) {
+        this.likedByUsers.remove(user);
+    }
+
 }

@@ -40,8 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String secretKey;
 
     private static final String[] WHITE_LIST_REGEX = {
-            "^/api/v1/user/.*",
-            "^/api/v1/post/.*",
+            "^/api/v1/user.*",
+            "^/api/v1/post.*",
     };
 
     @Override

@@ -1,6 +1,7 @@
 package com.stormx.hicoder.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.stormx.hicoder.controllers.requests.NewPostRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,7 +14,6 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
-@ToString
 @Table(name = "posts")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,10 +28,11 @@ public class Post {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
     @JsonIgnore
-    private User user;
+    private User author;
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
@@ -51,5 +52,48 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> likedByUsers;
+
+    public boolean isPostedBy(User user) {
+        return this.author.equals(user);
+    }
+    public void addLike(User user) {
+        this.likedByUsers.add(user);
+    }
+
+    public void removeLike(User user) {
+        this.likedByUsers.remove(user);
+    }
+
+    public boolean isLikedBy(User user) {
+        return this.likedByUsers.contains(user);
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
+
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
+    }
+
+    public boolean isCommentedBy(Comment comment) {
+        return this.comments.contains(comment);
+    }
+
+    public Post(NewPostRequest post) {
+        this.title = post.getTitle();
+        this.content = post.getContent();
+    }
+    @Override
+    public String toString() {
+
+        return "Post{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", author=" + author.getId() +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 
 }
