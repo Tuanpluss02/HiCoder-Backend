@@ -60,7 +60,7 @@ services:
 
 volumes:
   postgres-data:
-    redis-data:
+  redis-data:
 networks:
   hicoder-network:
 
