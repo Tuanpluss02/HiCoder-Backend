@@ -2,6 +2,7 @@ package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
+import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,8 +23,8 @@ public class UserController {
     @GetMapping("/me")
     ResponseEntity<ResponseGeneral> getCurrentUserDetail(HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", request.getRequestURI(), currentUser));
+        UserDTO response = new UserDTO(currentUser);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", request.getRequestURI(), response));
     }
-
 
 }

@@ -1,23 +1,25 @@
 version: '3'
 
 services:
-  mysql-hicoder:
-    image: 'mysql:latest'
+  postgres-hicoder:
+    image: 'postgres:latest'
     environment:
-      - 'MYSQL_DATABASE=hicoder'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'POSTGRES_DB=hicoder'
+      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_PASSWORD=verysecret'
     networks:
       - hicoder-network
-    container_name: mysql-hicoder
+    container_name: postgres-hicoder
     healthcheck:
-      test: "/usr/bin/mysql --user=root --password=verysecret --execute \"SHOW DATABASES;\""
+      test: [ "CMD-SHELL", 'pg_isready -U postgres' ]
       interval: 5s
       timeout: 2s
       retries: 100
     volumes:
-      - mysql-data:/var/lib/mysql
+      - postgres-data:/var/lib/postgresql/data
     ports:
-      - '3306:3306'
+      - '5432:5432'
+
 
   redis-hicoder:
     image: 'redis:latest'
@@ -57,8 +59,8 @@ services:
 #      - '443:443'
 
 volumes:
-    mysql-data:
-    redis-data:
+  postgres-data:
+  redis-data:
 networks:
   hicoder-network:
 

@@ -1,6 +1,7 @@
 package com.stormx.hicoder.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.stormx.hicoder.controllers.requests.NewPostRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -52,6 +53,9 @@ public class Post {
     )
     private List<User> likedByUsers;
 
+    public boolean isPostedBy(User user) {
+        return this.author.equals(user);
+    }
     public void addLike(User user) {
         this.likedByUsers.add(user);
     }
@@ -76,15 +80,20 @@ public class Post {
         return this.comments.contains(comment);
     }
 
-
+    public Post(NewPostRequest post) {
+        this.title = post.getTitle();
+        this.content = post.getContent();
+    }
     @Override
     public String toString() {
+
         return "Post{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", user=" + author +
+                ", author=" + author.getId() +
                 ", createdAt=" + createdAt +
                 '}';
     }
+
 }
