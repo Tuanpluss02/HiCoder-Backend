@@ -14,10 +14,19 @@ public class PostDTO {
 
     private String author;
 
+    private String createdAt;
+
+    private long likesCount;
+
+    private long commentsCount;
+
     public PostDTO(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.author = post.getAuthor().getId();
+        this.likesCount = post.getLikedByUsers().size();
+        this.commentsCount = post.getComments().size();
+        this.createdAt = post.getCreatedAt().toString();
     }
 }

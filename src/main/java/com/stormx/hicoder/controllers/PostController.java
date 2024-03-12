@@ -58,4 +58,11 @@ public class PostController {
         postService.deletePost(postId, currentUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Delete post successfully", request.getRequestURI(), null));
     }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<?> likePost(@PathVariable String postId, HttpServletRequest request) {
+        User currentUser = userService.getCurrentUser();
+        postService.likePostOperation(postId, currentUser);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Like post successfully", request.getRequestURI(), null));
+    }
 }

@@ -33,15 +33,15 @@ public class AuthenticationController {
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Register successfully", request.getRequestURI(), authenticationResponse));
     }
 
-    @PostMapping("/send-mail-rspwd")
+    @PostMapping("/send-mail-rsp")
     public ResponseEntity<?> sendEmailResetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest, HttpServletRequest request) {
         authenticationService.sendEmailResetPassword(resetPasswordRequest);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Send email reset password successfully", request.getRequestURI(), null));
     }
 
     @PostMapping("/reset-password")
-    public void verifyAndChangePwd(@RequestParam("token") String token) {
-
+    public String verifyAndChangePwd(@RequestParam("token") String token) {
+        return token;
     }
 
 
