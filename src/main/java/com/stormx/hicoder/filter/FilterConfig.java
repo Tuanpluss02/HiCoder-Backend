@@ -28,8 +28,8 @@ public class FilterConfig {
     }
 
     @Bean
-    public FilterRegistrationBean <CustomURLFilter> filterRegistrationBean() {
-        FilterRegistrationBean < CustomURLFilter > registrationBean = new FilterRegistrationBean<>();
+    public FilterRegistrationBean<CustomURLFilter> filterRegistrationBean() {
+        FilterRegistrationBean<CustomURLFilter> registrationBean = new FilterRegistrationBean<>();
         CustomURLFilter customURLFilter = new CustomURLFilter();
         registrationBean.setFilter(customURLFilter);
         registrationBean.setOrder(2);

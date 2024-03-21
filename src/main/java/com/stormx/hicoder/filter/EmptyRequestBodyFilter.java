@@ -17,31 +17,36 @@ public class EmptyRequestBodyFilter implements Filter {
 
     private static final String[] WHITE_LIST_URL = {
             "/api/v1/user/me",
+            "/api/v1/like",
             "/h2-console",
             "/swagger-resources",
             "/configuration/ui",
             "/configuration/security",
-            "/swagger-ui.html",
-            "/swagger-ui/index.html"
+            "/swagger-ui",
     };
+
+    private boolean isWhiteListed(String servletPath) {
+        return Arrays.stream(WHITE_LIST_URL).anyMatch(servletPath::startsWith);
+    }
+
+    private boolean isGetMethod(String method) {
+        return "GET".equalsIgnoreCase(method);
+    }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String servletPath = ((HttpServletRequest) servletRequest).getServletPath();
-        System.out.println(servletPath);
-        if (Arrays.stream(WHITE_LIST_URL).anyMatch(servletPath::startsWith)) {
+        if (isWhiteListed(servletPath) || isGetMethod(((HttpServletRequest) servletRequest).getMethod())) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
+        if (servletRequest.getContentLength() == 0) {
+            servletResponse.setContentType("application/json");
+            servletResponse.setCharacterEncoding("UTF-8");
+            ((HttpServletResponse) servletResponse).setStatus(400);
+            new ObjectMapper().writeValue(servletResponse.getOutputStream(), new ErrorResponse(HttpStatus.BAD_REQUEST, "Request body can't empty", servletPath));
+            return;
 
-        if ("POST".equalsIgnoreCase(((HttpServletRequest) servletRequest).getMethod()) || "PUT".equalsIgnoreCase(((HttpServletRequest) servletRequest).getMethod()) || "PATCH".equalsIgnoreCase(((HttpServletRequest) servletRequest).getMethod())) {
-            if (servletRequest.getContentLength() == 0) {
-                servletResponse.setContentType("application/json");
-                servletResponse.setCharacterEncoding("UTF-8");
-                ((HttpServletResponse) servletResponse).setStatus(400);
-                new ObjectMapper().writeValue(servletResponse.getOutputStream(), new ErrorResponse(HttpStatus.BAD_REQUEST, "Request body is empty", servletPath));
-                return;
-            }
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
