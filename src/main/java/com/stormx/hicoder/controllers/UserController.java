@@ -5,6 +5,7 @@ import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "api/v1/user")
 @RequiredArgsConstructor
+@Tag(name = "User Controller", description = "Include methods to modify, get user information")
 public class UserController {
 
     private final UserService userService;

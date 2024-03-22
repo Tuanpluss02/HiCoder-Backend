@@ -6,6 +6,7 @@ import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.PostService;
 import com.stormx.hicoder.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController()
 @RequestMapping(path = "api/v1/post")
 @CrossOrigin(origins = "*")
+@Tag(name = "User Post Controller", description = "Include method to manage user's post")
 @RequiredArgsConstructor
 public class PostController {
     private final UserService userService;
