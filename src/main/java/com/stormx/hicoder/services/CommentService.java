@@ -1,6 +1,6 @@
 package com.stormx.hicoder.services;
 
-import com.stormx.hicoder.controllers.requests.NewCommentRequest;
+import com.stormx.hicoder.controllers.requests.CommentRequest;
 import com.stormx.hicoder.dto.CommentDTO;
 import com.stormx.hicoder.entities.Comment;
 import com.stormx.hicoder.entities.Post;
@@ -17,9 +17,9 @@ public interface CommentService {
 
     CommentDTO getUserCommentById(String commentId, User currentUser);
 
-    CommentDTO createComment(NewCommentRequest newCommentRequest, User user, Post post);
+    CommentDTO createComment(CommentRequest commentRequest, User user, Post post);
 
-    CommentDTO updateComment(String commentId, NewCommentRequest newCommentRequest, User currentUser);
+    CommentDTO updateComment(String commentId, CommentRequest commentRequest, User currentUser, Post postContainThisComment);
 
     void deleteComment(String commentId, User currentUser);
 }

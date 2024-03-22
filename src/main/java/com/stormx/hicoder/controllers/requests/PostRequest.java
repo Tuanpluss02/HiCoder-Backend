@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewPostRequest {
+public class PostRequest {
 
     @NotBlank(message = "Title is required")
     @NotEmpty(message = "Title is required")

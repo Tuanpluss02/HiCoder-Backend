@@ -1,6 +1,6 @@
 package com.stormx.hicoder.services.implement;
 
-import com.stormx.hicoder.controllers.requests.NewCommentRequest;
+import com.stormx.hicoder.controllers.requests.CommentRequest;
 import com.stormx.hicoder.dto.CommentDTO;
 import com.stormx.hicoder.entities.Comment;
 import com.stormx.hicoder.entities.Post;
@@ -31,7 +31,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDTO> getAllCommentsOfPost(Post post) {
-        return null;
+        List<Comment> rawComment = commentRepository.findAllByPost(post);
+        return rawComment.stream().map(CommentDTO::new).toList();
     }
 
     @Override
@@ -45,8 +46,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO createComment(NewCommentRequest newCommentRequest, User user, Post post) {
-        Comment newComment = new Comment(newCommentRequest);
+    public CommentDTO createComment(CommentRequest commentRequest, User user, Post post) {
+        Comment newComment = new Comment(commentRequest);
         newComment.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         newComment.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         newComment.setAuthor(user);
@@ -60,8 +61,18 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO updateComment(String commentId, NewCommentRequest newCommentRequest, User currentUser) {
-        return null;
+    public CommentDTO updateComment(String commentId, CommentRequest commentRequest, User currentUser, Post post) {
+        Comment commentToUpdate = getCommentById(commentId);
+        if (!commentToUpdate.isCommentedBy(currentUser)) {
+            throw new BadRequestException("User doesn't have comment: " + commentId + " in post: " + post.getId());
+        }
+        if (!commentToUpdate.isCommentedOn(post)) {
+            throw new BadRequestException("Post: " + post.getId() + " doesn't have comment: " + commentId);
+        }
+        commentToUpdate.setContent(commentRequest.getContent());
+        commentToUpdate.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        commentRepository.save(commentToUpdate);
+        return new CommentDTO(commentToUpdate);
     }
 
     @Override

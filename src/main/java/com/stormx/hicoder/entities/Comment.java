@@ -1,7 +1,7 @@
 package com.stormx.hicoder.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.stormx.hicoder.controllers.requests.NewCommentRequest;
+import com.stormx.hicoder.controllers.requests.CommentRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -55,8 +55,8 @@ public class Comment {
     )
     private List<User> likedByUsers = new ArrayList<>();
 
-    public Comment(NewCommentRequest newCommentRequest) {
-        this.content = newCommentRequest.getContent();
+    public Comment(CommentRequest commentRequest) {
+        this.content = commentRequest.getContent();
     }
 
     public boolean likeOperation(User user) {
@@ -67,6 +67,14 @@ public class Comment {
         this.likedByUsers.add(user);
         return true;
 
+    }
+
+    public boolean isCommentedBy(User user) {
+        return this.author.equals(user);
+    }
+
+    public boolean isCommentedOn(Post post) {
+        return this.post.equals(post);
     }
 
 }

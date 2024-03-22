@@ -10,10 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewCommentRequest {
-    @NotBlank(message = "PostId is required")
-    @NotEmpty(message = "PostId is required")
-    private String postId;
+public class CommentRequest {
+//    @NotBlank(message = "PostId is required")
+//    @NotEmpty(message = "PostId is required")
+//    private String postId;
 
     @NotBlank(message = "Content is required")
     @NotEmpty(message = "Content is required")

@@ -1,7 +1,7 @@
 package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.controllers.requests.NewPostRequest;
+import com.stormx.hicoder.controllers.requests.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.PostService;
@@ -41,16 +41,16 @@ public class PostController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> newPost(@Valid @RequestBody NewPostRequest newPostRequest, HttpServletRequest request) {
+    public ResponseEntity<?> newPost(@Valid @RequestBody PostRequest postRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        PostDTO createdPost = postService.createPost(newPostRequest, currentUser);
+        PostDTO createdPost = postService.createPost(postRequest, currentUser);
         return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), createdPost));
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid @RequestBody NewPostRequest newPostRequest, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid @RequestBody PostRequest postRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        PostDTO updatedPost = postService.updatePost(postId, newPostRequest, currentUser);
+        PostDTO updatedPost = postService.updatePost(postId, postRequest, currentUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), updatedPost));
     }
 
