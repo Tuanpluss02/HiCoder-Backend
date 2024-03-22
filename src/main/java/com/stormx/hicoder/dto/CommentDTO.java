@@ -2,8 +2,10 @@ package com.stormx.hicoder.dto;
 
 import com.stormx.hicoder.entities.Comment;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class CommentDTO {
     private String id;
     private String content;

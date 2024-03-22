@@ -15,8 +15,6 @@ public interface CommentService {
 
     Comment getCommentById(String commentId);
 
-    CommentDTO getUserCommentById(String commentId, User currentUser);
-
     CommentDTO createComment(CommentRequest commentRequest, User user, Post post);
 
     CommentDTO updateComment(String commentId, CommentRequest commentRequest, User currentUser, Post postContainThisComment);

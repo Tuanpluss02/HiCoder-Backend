@@ -27,7 +27,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public boolean likeCommentOperation(String commentId, User currentUser) {
-        return false;
+        Comment comment = getCommentById(commentId);
+        boolean res = comment.likeOperation(currentUser);
+        commentRepository.save(comment);
+        return res;
     }
 
     @Override
@@ -38,11 +41,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment getCommentById(String commentId) {
         return commentRepository.findById(commentId).orElseThrow(() -> new BadRequestException("Comment not found id: " + commentId));
-    }
-
-    @Override
-    public CommentDTO getUserCommentById(String commentId, User currentUser) {
-        return null;
     }
 
     @Override
@@ -62,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDTO updateComment(String commentId, CommentRequest commentRequest, User currentUser, Post post) {
-        Comment commentToUpdate = getCommentForRequest(commentId, currentUser, post);
+        Comment commentToUpdate = checkCommentValid(commentId, currentUser, post);
         commentToUpdate.setContent(commentRequest.getContent());
         commentToUpdate.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         commentRepository.save(commentToUpdate);
@@ -72,7 +70,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(String commentId, User currentUser, Post post) {
-        Comment commentToDelete = getCommentForRequest(commentId, currentUser, post);
+        Comment commentToDelete = checkCommentValid(commentId, currentUser, post);
         currentUser.removeComment(commentToDelete);
         post.removeComment(commentToDelete);
         commentRepository.delete(commentToDelete);
@@ -81,7 +79,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
 
-    private Comment getCommentForRequest(String commentId, User currentUser, Post post) {
+    private Comment checkCommentValid(String commentId, User currentUser, Post post) {
         Comment commentData = getCommentById(commentId);
         if (!commentData.isCommentedBy(currentUser)) {
             throw new BadRequestException("User doesn't have comment: " + commentId + " in post: " + post.getId());

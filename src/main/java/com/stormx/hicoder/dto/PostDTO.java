@@ -1,9 +1,13 @@
 package com.stormx.hicoder.dto;
 
 import com.stormx.hicoder.entities.Post;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostDTO {
 
     private String id;

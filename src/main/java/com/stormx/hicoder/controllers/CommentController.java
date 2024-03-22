@@ -34,19 +34,23 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping()
-    public ResponseEntity<SuccessResponse> createNewComment(@PathVariable String postId, @Valid @RequestBody CommentRequest commentRequest, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> createNewComment(@PathVariable String postId,
+                                                            @Valid @RequestBody CommentRequest commentRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         Post postToComment = postService.getPostById(postId);
         CommentDTO response = commentService.createComment(commentRequest, currentUser, postToComment);
-        return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new comment successfully", request.getRequestURI(), response));
+        return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED,
+                "Create new comment successfully", request.getRequestURI(), response));
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<SuccessResponse> deleteComment(@PathVariable String postId, @PathVariable String commentId, @Valid @RequestBody CommentRequest commentRequest, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> deleteComment(@PathVariable String postId, @PathVariable String commentId,
+                                                         @Valid @RequestBody CommentRequest commentRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         Post postHaveThisComment = postService.getPostById(postId);
         CommentDTO response = commentService.updateComment(commentId, commentRequest, currentUser, postHaveThisComment);
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update comment successfully", request.getRequestURI(), response));
+        return ResponseEntity.ok(
+                new SuccessResponse(HttpStatus.OK, "Update comment successfully", request.getRequestURI(), response));
     }
 
     @GetMapping()
@@ -58,7 +62,8 @@ public class CommentController {
         String sortField = sort[0];
         String sortDirection = sort[1];
         if (!Utils.isValidSortField(sortField, CommentDTO.class)) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(HttpStatus.BAD_REQUEST, "Invalid sort field", request.getRequestURI()));
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST, "Invalid sort field", request.getRequestURI()));
         }
         Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(direction, sortField));
@@ -72,10 +77,20 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<SuccessResponse> deleteComment(@PathVariable String postId, @PathVariable String commentId, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> deleteComment(@PathVariable String postId, @PathVariable String commentId,
+                                                         HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         Post postHaveThisComment = postService.getPostById(postId);
         commentService.deleteComment(commentId, currentUser, postHaveThisComment);
-        return ResponseEntity.accepted().body(new SuccessResponse(HttpStatus.OK, "Remove comment successfully", request.getRequestURI(), null));
+        return ResponseEntity.accepted()
+                .body(new SuccessResponse(HttpStatus.OK, "Remove comment successfully", request.getRequestURI(), null));
+    }
+
+    @PostMapping("/{commentId}/like")
+    public ResponseEntity<SuccessResponse> likeComment(@PathVariable String commentId, @PathVariable String postId, HttpServletRequest request) {
+        User currentUser = userService.getCurrentUser();
+        boolean response = commentService.likeCommentOperation(commentId, currentUser);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, (response ? "Like" : "Unlike") + " comment successfully", request.getRequestURI(), null));
+
     }
 }
