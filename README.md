@@ -15,7 +15,7 @@ Boot and PostgreSQL, designed to provide functionalities related to user managem
 
 
 3. Install the required dependencies:
-> mvn install
+> mvn clean package
 
 
 4. Configure the application properties by editing `src/main/resources/application.properties` and set the appropriate database connection and other settings.
