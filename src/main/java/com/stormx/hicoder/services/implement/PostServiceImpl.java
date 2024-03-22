@@ -22,10 +22,11 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
 
     @Override
-    public void likePostOperation(String postId, User currentUser) {
+    public boolean likePostOperation(String postId, User currentUser) {
         Post post = getPostById(postId);
-        post.likeOperation(currentUser);
+        boolean result = post.likeOperation(currentUser);
         postRepository.save(post);
+        return result;
     }
 
 

@@ -5,6 +5,7 @@ import com.stormx.hicoder.controllers.requests.AuthenticationRequest;
 import com.stormx.hicoder.controllers.requests.AuthenticationResponse;
 import com.stormx.hicoder.controllers.requests.ResetPasswordRequest;
 import com.stormx.hicoder.services.AuthenticationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @Tag(name = "Authentication", description = "Include method for login, sign up,...")
+@SecurityRequirements()
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;

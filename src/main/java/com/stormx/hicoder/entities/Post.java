@@ -54,18 +54,24 @@ public class Post {
     )
     private List<User> likedByUsers = new ArrayList<>();
 
+    public Post(NewPostRequest post) {
+        this.title = post.getTitle();
+        this.content = post.getContent();
+    }
+
     public boolean isPostedBy(User user) {
         return this.author.equals(user);
     }
 
-    public void likeOperation(User user) {
+    public boolean likeOperation(User user) {
         if (this.likedByUsers.contains(user)) {
             this.likedByUsers.remove(user);
-        } else {
-            this.likedByUsers.add(user);
+            return false;
         }
-    }
+        this.likedByUsers.add(user);
+        return true;
 
+    }
 
     public boolean isLikedBy(User user) {
         return this.likedByUsers.contains(user);
@@ -83,10 +89,6 @@ public class Post {
         return this.comments.contains(comment);
     }
 
-    public Post(NewPostRequest post) {
-        this.title = post.getTitle();
-        this.content = post.getContent();
-    }
     @Override
     public String toString() {
 

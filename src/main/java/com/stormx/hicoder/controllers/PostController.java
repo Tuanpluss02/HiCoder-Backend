@@ -64,7 +64,7 @@ public class PostController {
     @PostMapping("/{postId}/like")
     public ResponseEntity<?> likePost(@PathVariable String postId, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        postService.likePostOperation(postId, currentUser);
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Like post successfully", request.getRequestURI(), null));
+        boolean response = postService.likePostOperation(postId, currentUser);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, (response ? "Like" : "Unlike") + " post successfully", request.getRequestURI(), null));
     }
 }
