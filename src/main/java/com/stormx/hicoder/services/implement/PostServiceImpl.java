@@ -11,6 +11,8 @@ import com.stormx.hicoder.services.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,6 +20,15 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+
+    @Override
+    public boolean likePostOperation(String postId, User currentUser) {
+        Post post = getPostById(postId);
+        boolean result = post.likeOperation(currentUser);
+        postRepository.save(post);
+        return result;
+    }
+
 
     @Override
     public List<PostDTO> getAllPostsOfUser(User user) {
@@ -46,6 +57,7 @@ public class PostServiceImpl implements PostService {
     public PostDTO createPost(NewPostRequest newPostRequest, User user) {
         Post newPost = new Post(newPostRequest);
         newPost.setAuthor(user);
+        newPost.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         user.addPost(newPost);
         userRepository.save(user);
         postRepository.save(newPost);
