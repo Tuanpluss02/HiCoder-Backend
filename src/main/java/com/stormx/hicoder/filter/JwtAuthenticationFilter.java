@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stormx.hicoder.common.ErrorResponse;
-import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -60,6 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String servletPath = request.getServletPath();
         if (isWhiteListed(servletPath)) {
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(null, null, null));
             filterChain.doFilter(request, response);
             return;
         }
@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey.getBytes())).build().verify(authorizationHeader.substring("Bearer ".length()));
             String username = decodedJWT.getSubject();
-            User user = userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));
+            userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));
             Collection<SimpleGrantedAuthority> authorities = Arrays.stream(decodedJWT.getClaim("roles").asArray(String.class)).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null, authorities));
             response.setContentType(APPLICATION_JSON_VALUE);
@@ -83,6 +83,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setContentType(APPLICATION_JSON_VALUE);
             new ObjectMapper().writeValue(response.getOutputStream(), new ErrorResponse(UNAUTHORIZED, e.getMessage(), servletPath));
         }
-
     }
 }
