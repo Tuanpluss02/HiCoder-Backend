@@ -1,8 +1,9 @@
 package com.stormx.hicoder.controllers;
 
-import com.stormx.hicoder.common.SuccessResponse;
+import com.stormx.hicoder.common.*;
 import com.stormx.hicoder.controllers.requests.CommentRequest;
 import com.stormx.hicoder.dto.CommentDTO;
+import com.stormx.hicoder.entities.Comment;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.CommentService;
@@ -12,6 +13,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,10 +50,25 @@ public class CommentController {
     }
 
     @GetMapping()
-    public ResponseEntity<SuccessResponse> getPostComment(@PathVariable String postId, HttpServletRequest request) {
+    public ResponseEntity<ResponseGeneral> getPostComment(@PathVariable String postId,
+                                                          @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size,
+                                                          @RequestParam(defaultValue = "createdAt,desc") String[] sort,
+                                                          HttpServletRequest request) {
+        String sortField = sort[0];
+        String sortDirection = sort[1];
+        if (!Utils.isValidSortField(sortField, CommentDTO.class)) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(HttpStatus.BAD_REQUEST, "Invalid sort field", request.getRequestURI()));
+        }
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(direction, sortField));
         Post postToGetComment = postService.getPostById(postId);
-        List<CommentDTO> allComment = commentService.getAllCommentsOfPost(postToGetComment);
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get comments for post successfully", request.getRequestURI(), allComment));
+        Page<Comment> commentPage = commentService.getAllCommentsOfPost(postToGetComment, pageRequest);
+        PaginationInfo paginationInfo = new PaginationInfo(commentPage.getNumber(),
+                commentPage.getSize(), commentPage.getTotalPages(), commentPage.getTotalElements());
+        List<CommentDTO> response = commentPage.getContent().stream().map(CommentDTO::new).toList();
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get comments for post successfully",
+                request.getRequestURI(), response, paginationInfo));
     }
 
     @DeleteMapping("/{commentId}")

@@ -5,13 +5,13 @@ import com.stormx.hicoder.dto.CommentDTO;
 import com.stormx.hicoder.entities.Comment;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
     boolean likeCommentOperation(String commentId, User currentUser);
 
-    List<CommentDTO> getAllCommentsOfPost(Post post);
+    Page<Comment> getAllCommentsOfPost(Post post, Pageable pageable);
 
     Comment getCommentById(String commentId);
 

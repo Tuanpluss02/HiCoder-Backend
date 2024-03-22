@@ -11,11 +11,12 @@ import com.stormx.hicoder.repositories.PostRepository;
 import com.stormx.hicoder.repositories.UserRepository;
 import com.stormx.hicoder.services.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +31,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDTO> getAllCommentsOfPost(Post post) {
-        List<Comment> rawComment = commentRepository.findAllByPost(post);
-        return rawComment.stream().map(CommentDTO::new).toList();
+    public Page<Comment> getAllCommentsOfPost(Post post, Pageable pageable) {
+        return commentRepository.findAllByPost(post, pageable);
     }
 
     @Override

@@ -12,4 +12,5 @@ public abstract class ResponseGeneral {
     protected int status;
     protected String message;
     protected Object body;
+    protected Object pageable;
 }
