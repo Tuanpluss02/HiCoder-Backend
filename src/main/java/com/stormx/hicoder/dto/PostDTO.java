@@ -7,17 +7,11 @@ import lombok.Data;
 public class PostDTO {
 
     private String id;
-
     private String title;
-
     private String content;
-
     private String author;
-
     private String createdAt;
-
     private long likesCount;
-
     private long commentsCount;
 
     public PostDTO(Post post) {

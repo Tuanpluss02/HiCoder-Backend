@@ -45,6 +45,10 @@ public class Post {
     @Column(name = "create_date")
     private Timestamp createdAt;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "update_date")
+    private Timestamp updatedAt;
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(
@@ -85,9 +89,6 @@ public class Post {
         this.comments.remove(comment);
     }
 
-    public boolean isCommentedBy(Comment comment) {
-        return this.comments.contains(comment);
-    }
 
     @Override
     public String toString() {
