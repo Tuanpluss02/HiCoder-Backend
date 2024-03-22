@@ -62,21 +62,33 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDTO updateComment(String commentId, CommentRequest commentRequest, User currentUser, Post post) {
-        Comment commentToUpdate = getCommentById(commentId);
-        if (!commentToUpdate.isCommentedBy(currentUser)) {
-            throw new BadRequestException("User doesn't have comment: " + commentId + " in post: " + post.getId());
-        }
-        if (!commentToUpdate.isCommentedOn(post)) {
-            throw new BadRequestException("Post: " + post.getId() + " doesn't have comment: " + commentId);
-        }
+        Comment commentToUpdate = getCommentForRequest(commentId, currentUser, post);
         commentToUpdate.setContent(commentRequest.getContent());
         commentToUpdate.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         commentRepository.save(commentToUpdate);
         return new CommentDTO(commentToUpdate);
     }
 
-    @Override
-    public void deleteComment(String commentId, User currentUser) {
 
+    @Override
+    public void deleteComment(String commentId, User currentUser, Post post) {
+        Comment commentToDelete = getCommentForRequest(commentId, currentUser, post);
+        currentUser.removeComment(commentToDelete);
+        post.removeComment(commentToDelete);
+        commentRepository.delete(commentToDelete);
+        postRepository.save(post);
+        userRepository.save(currentUser);
+    }
+
+
+    private Comment getCommentForRequest(String commentId, User currentUser, Post post) {
+        Comment commentData = getCommentById(commentId);
+        if (!commentData.isCommentedBy(currentUser)) {
+            throw new BadRequestException("User doesn't have comment: " + commentId + " in post: " + post.getId());
+        }
+        if (!commentData.isCommentedOn(post)) {
+            throw new BadRequestException("Post: " + post.getId() + " doesn't have comment: " + commentId);
+        }
+        return commentData;
     }
 }

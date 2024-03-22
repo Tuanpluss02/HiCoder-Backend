@@ -38,7 +38,7 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @PathVariable String commentId, @Valid @RequestBody CommentRequest commentRequest, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> deleteComment(@PathVariable String postId, @PathVariable String commentId, @Valid @RequestBody CommentRequest commentRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         Post postHaveThisComment = postService.getPostById(postId);
         CommentDTO response = commentService.updateComment(commentId, commentRequest, currentUser, postHaveThisComment);
@@ -50,6 +50,13 @@ public class CommentController {
         Post postToGetComment = postService.getPostById(postId);
         List<CommentDTO> allComment = commentService.getAllCommentsOfPost(postToGetComment);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get comments for post successfully", request.getRequestURI(), allComment));
+    }
 
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<SuccessResponse> deleteComment(@PathVariable String postId, @PathVariable String commentId, HttpServletRequest request) {
+        User currentUser = userService.getCurrentUser();
+        Post postHaveThisComment = postService.getPostById(postId);
+        commentService.deleteComment(commentId, currentUser, postHaveThisComment);
+        return ResponseEntity.accepted().body(new SuccessResponse(HttpStatus.OK, "Remove comment successfully", request.getRequestURI(), null));
     }
 }

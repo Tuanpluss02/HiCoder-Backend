@@ -21,5 +21,5 @@ public interface CommentService {
 
     CommentDTO updateComment(String commentId, CommentRequest commentRequest, User currentUser, Post postContainThisComment);
 
-    void deleteComment(String commentId, User currentUser);
+    void deleteComment(String commentId, User currentUser, Post post);
 }
