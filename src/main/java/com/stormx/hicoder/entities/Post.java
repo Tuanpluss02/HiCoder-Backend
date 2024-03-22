@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -36,7 +37,7 @@ public class Post {
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @CreationTimestamp
     @CreatedDate
@@ -51,18 +52,20 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> likedByUsers;
+    private List<User> likedByUsers = new ArrayList<>();
 
     public boolean isPostedBy(User user) {
         return this.author.equals(user);
     }
-    public void addLike(User user) {
-        this.likedByUsers.add(user);
+
+    public void likeOperation(User user) {
+        if (this.likedByUsers.contains(user)) {
+            this.likedByUsers.remove(user);
+        } else {
+            this.likedByUsers.add(user);
+        }
     }
 
-    public void removeLike(User user) {
-        this.likedByUsers.remove(user);
-    }
 
     public boolean isLikedBy(User user) {
         return this.likedByUsers.contains(user);
