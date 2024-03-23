@@ -9,11 +9,13 @@ import com.stormx.hicoder.repositories.PostRepository;
 import com.stormx.hicoder.repositories.UserRepository;
 import com.stormx.hicoder.services.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,14 +31,11 @@ public class PostServiceImpl implements PostService {
         return result;
     }
 
-
     @Override
-    public List<PostDTO> getAllPostsOfUser(User user) {
-        List<Post> userPosts = postRepository.findAllByAuthor(user);
-        return userPosts.stream()
-                .map(PostDTO::new)
-                .toList();
+    public Page<Post> getAllPostsOfUser(User user, Pageable pageable) {
+        return postRepository.findAllByAuthor(user, pageable);
     }
+
 
     @Override
     public Post getPostById(String postId) {
@@ -86,6 +85,12 @@ public class PostServiceImpl implements PostService {
         currentUser.removePost(post);
         userRepository.save(currentUser);
         postRepository.delete(post);
+    }
+
+    @Override
+    public Page<Post> getPostNewsFeed(User currentUser, PageRequest pageRequest) {
+        //TODO: implement this
+        return null;
     }
 
 }

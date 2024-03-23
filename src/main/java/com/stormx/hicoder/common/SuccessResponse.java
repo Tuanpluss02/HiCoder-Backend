@@ -11,7 +11,7 @@ public class SuccessResponse extends ResponseGeneral {
         super(LocalDateTime.now().toString(), path, status.value(), message, body, null);
     }
 
-    public SuccessResponse(HttpStatus status, String message, String path, Object body, Object pageable) {
-        super(LocalDateTime.now().toString(), path, status.value(), message, body, pageable);
+    public SuccessResponse(HttpStatus status, String message, String path, Object pageable, Object body) {
+        super(LocalDateTime.now().toString(), path, status.value(), message, pageable, body);
     }
 }

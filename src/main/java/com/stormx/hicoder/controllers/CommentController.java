@@ -1,6 +1,8 @@
 package com.stormx.hicoder.controllers;
 
-import com.stormx.hicoder.common.*;
+import com.stormx.hicoder.common.PaginationInfo;
+import com.stormx.hicoder.common.ResponseGeneral;
+import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.requests.CommentRequest;
 import com.stormx.hicoder.dto.CommentDTO;
 import com.stormx.hicoder.entities.Comment;
@@ -13,15 +15,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+
+import static com.stormx.hicoder.common.Utils.calculatePageable;
+import static com.stormx.hicoder.common.Utils.extractToDTO;
 
 @RestController()
 @RequestMapping(path = "api/v1/post/{postId}/comment")
@@ -59,21 +64,12 @@ public class CommentController {
                                                           @RequestParam(defaultValue = "10") int size,
                                                           @RequestParam(defaultValue = "createdAt,desc") String[] sort,
                                                           HttpServletRequest request) {
-        String sortField = sort[0];
-        String sortDirection = sort[1];
-        if (!Utils.isValidSortField(sortField, CommentDTO.class)) {
-            return ResponseEntity.badRequest()
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST, "Invalid sort field", request.getRequestURI()));
-        }
-        Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(direction, sortField));
+        PageRequest pageRequest = calculatePageable(page, size, sort, CommentDTO.class, request);
         Post postToGetComment = postService.getPostById(postId);
         Page<Comment> commentPage = commentService.getAllCommentsOfPost(postToGetComment, pageRequest);
-        PaginationInfo paginationInfo = new PaginationInfo(commentPage.getNumber(),
-                commentPage.getSize(), commentPage.getTotalPages(), commentPage.getTotalElements());
-        List<CommentDTO> response = commentPage.getContent().stream().map(CommentDTO::new).toList();
+        Pair<PaginationInfo, List<CommentDTO>> response = extractToDTO(commentPage, CommentDTO::new);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get comments for post successfully",
-                request.getRequestURI(), response, paginationInfo));
+                request.getRequestURI(), response.getLeft(), response.getRight()));
     }
 
     @DeleteMapping("/{commentId}")
