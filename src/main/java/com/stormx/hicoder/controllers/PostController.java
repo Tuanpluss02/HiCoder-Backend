@@ -1,11 +1,12 @@
 package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.controllers.requests.NewPostRequest;
+import com.stormx.hicoder.controllers.requests.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.PostService;
 import com.stormx.hicoder.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController()
 @RequestMapping(path = "api/v1/post")
 @CrossOrigin(origins = "*")
+@Tag(name = "User Post Controller", description = "Include method to manage user's post")
 @RequiredArgsConstructor
 public class PostController {
     private final UserService userService;
@@ -39,16 +41,16 @@ public class PostController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> newPost(@Valid @RequestBody NewPostRequest newPostRequest, HttpServletRequest request) {
+    public ResponseEntity<?> newPost(@Valid @RequestBody PostRequest postRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        PostDTO createdPost = postService.createPost(newPostRequest, currentUser);
+        PostDTO createdPost = postService.createPost(postRequest, currentUser);
         return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), createdPost));
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid @RequestBody NewPostRequest newPostRequest, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid @RequestBody PostRequest postRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        PostDTO updatedPost = postService.updatePost(postId, newPostRequest, currentUser);
+        PostDTO updatedPost = postService.updatePost(postId, postRequest, currentUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), updatedPost));
     }
 
@@ -57,5 +59,12 @@ public class PostController {
         User currentUser = userService.getCurrentUser();
         postService.deletePost(postId, currentUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Delete post successfully", request.getRequestURI(), null));
+    }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<?> likePost(@PathVariable String postId, HttpServletRequest request) {
+        User currentUser = userService.getCurrentUser();
+        boolean response = postService.likePostOperation(postId, currentUser);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, (response ? "Like" : "Unlike") + " post successfully", request.getRequestURI(), null));
     }
 }

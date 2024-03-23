@@ -1,6 +1,6 @@
 package com.stormx.hicoder.services.implement;
 
-import com.stormx.hicoder.controllers.requests.NewPostRequest;
+import com.stormx.hicoder.controllers.requests.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
@@ -11,6 +11,8 @@ import com.stormx.hicoder.services.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,6 +20,15 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+
+    @Override
+    public boolean likePostOperation(String postId, User currentUser) {
+        Post post = getPostById(postId);
+        boolean result = post.likeOperation(currentUser);
+        postRepository.save(post);
+        return result;
+    }
+
 
     @Override
     public List<PostDTO> getAllPostsOfUser(User user) {
@@ -43,9 +54,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDTO createPost(NewPostRequest newPostRequest, User user) {
-        Post newPost = new Post(newPostRequest);
+    public PostDTO createPost(PostRequest postRequest, User user) {
+        Post newPost = new Post(postRequest);
         newPost.setAuthor(user);
+        newPost.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         user.addPost(newPost);
         userRepository.save(user);
         postRepository.save(newPost);
@@ -54,7 +66,7 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public PostDTO updatePost(String postId, NewPostRequest postDetails, User currentUser) {
+    public PostDTO updatePost(String postId, PostRequest postDetails, User currentUser) {
         Post userPosts = getPostById(postId);
         if (!userPosts.isPostedBy(currentUser)) {
             throw new BadRequestException("User doesn't have post: " + postId);

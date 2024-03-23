@@ -1,13 +1,14 @@
 package com.stormx.hicoder.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.stormx.hicoder.controllers.requests.NewPostRequest;
+import com.stormx.hicoder.controllers.requests.PostRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -36,13 +37,17 @@ public class Post {
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @CreationTimestamp
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_date")
     private Timestamp createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "update_date")
+    private Timestamp updatedAt;
 
     @JsonIgnore
     @ManyToMany
@@ -51,17 +56,25 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> likedByUsers;
+    private List<User> likedByUsers = new ArrayList<>();
+
+    public Post(PostRequest post) {
+        this.title = post.getTitle();
+        this.content = post.getContent();
+    }
 
     public boolean isPostedBy(User user) {
         return this.author.equals(user);
     }
-    public void addLike(User user) {
-        this.likedByUsers.add(user);
-    }
 
-    public void removeLike(User user) {
-        this.likedByUsers.remove(user);
+    public boolean likeOperation(User user) {
+        if (this.likedByUsers.contains(user)) {
+            this.likedByUsers.remove(user);
+            return false;
+        }
+        this.likedByUsers.add(user);
+        return true;
+
     }
 
     public boolean isLikedBy(User user) {
@@ -76,14 +89,7 @@ public class Post {
         this.comments.remove(comment);
     }
 
-    public boolean isCommentedBy(Comment comment) {
-        return this.comments.contains(comment);
-    }
 
-    public Post(NewPostRequest post) {
-        this.title = post.getTitle();
-        this.content = post.getContent();
-    }
     @Override
     public String toString() {
 
