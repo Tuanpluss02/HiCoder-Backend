@@ -1,7 +1,7 @@
 package com.stormx.hicoder.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.stormx.hicoder.controllers.requests.NewPostRequest;
+import com.stormx.hicoder.controllers.requests.PostRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -45,6 +45,10 @@ public class Post {
     @Column(name = "create_date")
     private Timestamp createdAt;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "update_date")
+    private Timestamp updatedAt;
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(
@@ -54,7 +58,7 @@ public class Post {
     )
     private List<User> likedByUsers = new ArrayList<>();
 
-    public Post(NewPostRequest post) {
+    public Post(PostRequest post) {
         this.title = post.getTitle();
         this.content = post.getContent();
     }
@@ -85,9 +89,6 @@ public class Post {
         this.comments.remove(comment);
     }
 
-    public boolean isCommentedBy(Comment comment) {
-        return this.comments.contains(comment);
-    }
 
     @Override
     public String toString() {
