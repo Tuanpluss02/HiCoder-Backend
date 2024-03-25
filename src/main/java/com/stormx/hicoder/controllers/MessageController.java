@@ -1,29 +1,39 @@
 package com.stormx.hicoder.controllers;
 
-import com.stormx.hicoder.entities.Message;
-import com.stormx.hicoder.services.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import com.stormx.hicoder.common.ChatMessage;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
-@RestController
-@RequestMapping(
-        path = "api/v1/chat",
-        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-)
+@Controller("/api/v1/chat")
 public class MessageController {
-    @Autowired
-    private MessageService messageService;
-    @MessageMapping("/chat.sendMessage")
+
+    @MessageMapping("/send")
     @SendTo("/topic/public")
-    @PostMapping()
-    public Message sendMessage(@Payload Message message) {
-        return this.messageService.sendMessage(message);
+    public ChatMessage sendMessage(
+            @Payload ChatMessage chatMessage
+    ) {
+        return chatMessage;
+    }
+
+    @GetMapping("/index")
+    public String demoText(Model model) {
+        model.addAttribute("name", "John Doe");
+        return "index";
+    }
+
+    @MessageMapping("/adduser")
+    @SendTo("/topic/public")
+    public ChatMessage addUser(
+            @Payload ChatMessage chatMessage,
+            SimpMessageHeaderAccessor headerAccessor
+    ) {
+        // Add username in web socket session
+        headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+        return chatMessage;
     }
 }

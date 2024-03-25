@@ -64,7 +64,7 @@ public class CommentController {
                                                           @RequestParam(defaultValue = "10") int size,
                                                           @RequestParam(defaultValue = "createdAt,desc") String[] sort,
                                                           HttpServletRequest request) {
-        PageRequest pageRequest = calculatePageable(page, size, sort, CommentDTO.class, request);
+        PageRequest pageRequest = calculatePageable(page, size, sort, CommentDTO.class);
         Post postToGetComment = postService.getPostById(postId);
         Page<Comment> commentPage = commentService.getAllCommentsOfPost(postToGetComment, pageRequest);
         Pair<PaginationInfo, List<CommentDTO>> response = extractToDTO(commentPage, CommentDTO::new);

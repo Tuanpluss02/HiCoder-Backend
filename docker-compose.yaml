@@ -63,4 +63,3 @@ volumes:
   redis-data:
 networks:
   hicoder-network:
-

@@ -1,7 +1,6 @@
 package com.stormx.hicoder.common;
 
 import com.stormx.hicoder.exceptions.BadRequestException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,7 +8,6 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Utils {
     public static boolean isValidSortField(String sortField, Class<?> entityClass) {
@@ -21,7 +19,7 @@ public class Utils {
         }
     }
 
-    public static PageRequest calculatePageable(int page, int size, String[] sort, Class<?> clazz, HttpServletRequest request) {
+    public static PageRequest calculatePageable(int page, int size, String[] sort, Class<?> clazz) {
         String sortField = sort[0];
         String sortDirection = sort[1];
         if (!isValidSortField(sortField, clazz)) {
@@ -36,7 +34,7 @@ public class Utils {
                 entities.getSize(), entities.getTotalPages(), entities.getTotalElements());
         List<U> dtoList = entities.getContent().stream()
                 .map(converter)
-                .collect(Collectors.toList());
+                .toList();
         return Pair.of(paginationInfo, dtoList);
     }
 }
