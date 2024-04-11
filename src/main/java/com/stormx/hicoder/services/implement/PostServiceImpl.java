@@ -1,6 +1,6 @@
 package com.stormx.hicoder.services.implement;
 
-import com.stormx.hicoder.controllers.requests.NewPostRequest;
+import com.stormx.hicoder.controllers.requests.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
@@ -9,9 +9,13 @@ import com.stormx.hicoder.repositories.PostRepository;
 import com.stormx.hicoder.repositories.UserRepository;
 import com.stormx.hicoder.services.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +24,18 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
 
     @Override
-    public List<PostDTO> getAllPostsOfUser(User user) {
-        List<Post> userPosts = postRepository.findAllByAuthor(user);
-        return userPosts.stream()
-                .map(PostDTO::new)
-                .toList();
+    public boolean likePostOperation(String postId, User currentUser) {
+        Post post = getPostById(postId);
+        boolean result = post.likeOperation(currentUser);
+        postRepository.save(post);
+        return result;
     }
+
+    @Override
+    public Page<Post> getAllPostsOfUser(User user, Pageable pageable) {
+        return postRepository.findAllByAuthor(user, pageable);
+    }
+
 
     @Override
     public Post getPostById(String postId) {
@@ -43,9 +53,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDTO createPost(NewPostRequest newPostRequest, User user) {
-        Post newPost = new Post(newPostRequest);
+    public PostDTO createPost(PostRequest postRequest, User user) {
+        Post newPost = new Post(postRequest);
         newPost.setAuthor(user);
+        newPost.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         user.addPost(newPost);
         userRepository.save(user);
         postRepository.save(newPost);
@@ -54,7 +65,7 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public PostDTO updatePost(String postId, NewPostRequest postDetails, User currentUser) {
+    public PostDTO updatePost(String postId, PostRequest postDetails, User currentUser) {
         Post userPosts = getPostById(postId);
         if (!userPosts.isPostedBy(currentUser)) {
             throw new BadRequestException("User doesn't have post: " + postId);
@@ -74,6 +85,12 @@ public class PostServiceImpl implements PostService {
         currentUser.removePost(post);
         userRepository.save(currentUser);
         postRepository.delete(post);
+    }
+
+    @Override
+    public Page<Post> getPostNewsFeed(User currentUser, PageRequest pageRequest) {
+        //TODO: implement this
+        return null;
     }
 
 }

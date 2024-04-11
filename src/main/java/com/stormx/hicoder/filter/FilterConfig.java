@@ -7,13 +7,6 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 @Configuration
 public class FilterConfig {
-    @Bean
-    public FilterRegistrationBean<EmptyRequestBodyFilter> emptyRequestBodyFilterRegistrationBean() {
-        FilterRegistrationBean<EmptyRequestBodyFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new EmptyRequestBodyFilter());
-        registrationBean.addUrlPatterns("/api/v1/auth/**");
-        return registrationBean;
-    }
 
     @Bean
     public CommonsRequestLoggingFilter logFilter() {
@@ -28,8 +21,8 @@ public class FilterConfig {
     }
 
     @Bean
-    public FilterRegistrationBean <CustomURLFilter> filterRegistrationBean() {
-        FilterRegistrationBean < CustomURLFilter > registrationBean = new FilterRegistrationBean<>();
+    public FilterRegistrationBean<CustomURLFilter> filterRegistrationBean() {
+        FilterRegistrationBean<CustomURLFilter> registrationBean = new FilterRegistrationBean<>();
         CustomURLFilter customURLFilter = new CustomURLFilter();
         registrationBean.setFilter(customURLFilter);
         registrationBean.setOrder(2);

@@ -2,6 +2,7 @@ package com.stormx.hicoder.controllers.requests;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -11,13 +12,15 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewPostRequest {
+public class PostRequest {
 
     @NotBlank(message = "Title is required")
+    @NotEmpty(message = "Title is required")
     @Size(min = 5, message = "Title must be at least 5 characters")
     private String title;
 
     @NotBlank(message = "Content is required")
-    @Size(min = 10, message = "Content must be at least 10 characters")
+    @NotEmpty(message = "Content is required")
+    @Size(min = 5, message = "Content must be at least 5 characters")
     private String content;
 }

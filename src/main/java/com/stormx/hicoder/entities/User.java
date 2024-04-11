@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-public class User  implements UserDetails {
+public class User implements UserDetails {
     @Id
     @Getter
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -43,8 +43,12 @@ public class User  implements UserDetails {
     private List<Post> posts = new ArrayList<>();
 
     @JsonIgnore
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
+    @JsonIgnore
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
-    private List<Message> sentMessages  = new ArrayList<>();
+    private List<Message> sentMessages = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
@@ -89,16 +93,6 @@ public class User  implements UserDetails {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id='" + id + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", role=" + role +
-                '}';
-    }
 
     public void addPost(Post post) {
         this.posts.add(post);
@@ -106,6 +100,14 @@ public class User  implements UserDetails {
 
     public void removePost(Post post) {
         this.posts.remove(post);
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
+
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
     }
 
     public boolean isPostedBy(Post post) {

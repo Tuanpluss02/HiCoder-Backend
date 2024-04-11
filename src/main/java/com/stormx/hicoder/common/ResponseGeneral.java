@@ -11,5 +11,7 @@ public abstract class ResponseGeneral {
     protected String path;
     protected int status;
     protected String message;
+    protected Object pageable;
     protected Object body;
+
 }
