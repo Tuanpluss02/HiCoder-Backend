@@ -22,6 +22,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "User not found"));
     }
 
+    @Override
+    public User getUserById(String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "User not found"));
+    }
+
 
     @Override
     public User getCurrentUser() {

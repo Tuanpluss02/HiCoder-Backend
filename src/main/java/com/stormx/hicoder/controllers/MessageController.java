@@ -1,21 +1,18 @@
 package com.stormx.hicoder.controllers;
 
+import com.stormx.hicoder.controllers.requests.MessageEdit;
 import com.stormx.hicoder.controllers.requests.MessageSend;
-import com.stormx.hicoder.entities.Message;
+import com.stormx.hicoder.dto.MessageDTO;
+import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import com.stormx.hicoder.services.UserService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -25,11 +22,33 @@ import org.springframework.stereotype.Controller;
 public class MessageController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final UserService userService;
+    private final MessageService messageService;
 
-    @MessageMapping("/chat")
+    @MessageMapping("/send")
     public void chat(@Payload MessageSend message) {
         log.info("Message received: {}", message);
-        simpMessagingTemplate.convertAndSendToUser(message.to(), "/topic", message);
+        User currentUser = userService.getCurrentUser();
+        User toUser = userService.getUserById(message.getSender());
+        MessageDTO messageDTO = new MessageDTO(currentUser, message.getContent(), toUser);
+        messageService.saveMessage(messageDTO);
+        simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/topic", message);
     }
 
+    @MessageMapping("/edit")
+    public void edit(@Payload MessageEdit message) {
+        log.info("Message received: {}", message);
+        User currentUser = userService.getCurrentUser();
+        messageService.editMessage(currentUser,message);
+//        simpMessagingTemplate.convertAndSendToUser(message.to(), "/topic", message);
+        simpMessagingTemplate.convertAndSend("/topic", message);
+    }
+
+//    @MessageMapping("/delete")
+//    public void delete(@Payload MessageEdit message) {
+//        log.info("Message received: {}", message);
+//        User currentUser = userService.getCurrentUser();
+//        messageService.deleteMessage(currentUser, message.getMessageId());
+//        simpMessagingTemplate.convertAndSendToUser(message.to(), "/topic", message);
+//    }
 }
