@@ -1,5 +1,6 @@
 package com.stormx.hicoder.controllers;
 
+import com.stormx.hicoder.controllers.requests.MessageSend;
 import com.stormx.hicoder.entities.Message;
 import com.stormx.hicoder.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +12,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping(
-        path = "api/v1/chat",
-        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-)
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+
+@Controller
+@RequiredArgsConstructor
+@Slf4j
 public class MessageController {
-    @Autowired
-    private MessageService messageService;
-    @MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/public")
-    @PostMapping()
-    public Message sendMessage(@Payload Message message) {
-        return this.messageService.sendMessage(message);
+
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    @MessageMapping("/chat")
+    public void chat(@Payload MessageSend message) {
+        log.info("Message received: {}", message);
+        simpMessagingTemplate.convertAndSendToUser(message.to(), "/topic", message);
     }
+
 }

@@ -40,6 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private boolean isWhiteListed(String servletPath) {
         final String[] WHITE_LIST_URL = {
+                "/ws",
+                "/home",
+                "/favicon",
+                "/index.html",
                 "/api/v1/auth/",
                 "/h2-console/",
                 "/h2-console",
