@@ -32,10 +32,11 @@ public class FollowServiceImpl implements FollowService {
         if (currentUser.equals(targetUser)) {
             throw new BadRequestException("Cannot unfollow yourself");
         }
-        if (!followRepository.existsByFollowerAndFollowing(currentUser, targetUser)) {
+        Follow follow = followRepository.findByFollowerAndFollowing(currentUser, targetUser);
+        if (follow == null) {
             throw new BadRequestException("Not following");
         }
-        followRepository.deleteByFollowerAndFollowing(currentUser, targetUser);
+        followRepository.delete(follow);
     }
 
     @Override
