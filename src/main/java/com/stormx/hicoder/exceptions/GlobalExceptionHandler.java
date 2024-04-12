@@ -15,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
@@ -27,7 +28,10 @@ public class GlobalExceptionHandler {
         logger.error("Access Denied: " + exception.getLocalizedMessage());
         return new ErrorResponse(HttpStatus.FORBIDDEN, "Access denied, you must have role Admin", request.getRequestURI());
     }
-
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<?> handleMaxSizeException(MaxUploadSizeExceededException exc, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ErrorResponse(HttpStatus.EXPECTATION_FAILED, "File too large!", request.getRequestURI()));
+    }
     @ExceptionHandler({AppException.class})
     public ResponseEntity<?> handlerAppException(AppException e, HttpServletRequest request) {
         logger.error("AppException: " + e.getLocalizedMessage());

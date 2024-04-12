@@ -24,6 +24,7 @@ public class SecurityConfiguration {
             "/ws/**",
             "/index.html",
             "/api/v1/auth/**",
+            "/files/**",
             "/h2-console/**",
             "/h2-console",
             "/swagger-resources",
