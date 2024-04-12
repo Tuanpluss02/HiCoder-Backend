@@ -58,11 +58,11 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                 StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 log.info("Headers: {}", accessor);
-
                 assert accessor != null;
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                if(StompCommand.CONNECT.equals(accessor.getCommand())){
                     String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
                     assert authorizationHeader != null;
+                    log.info("Authorization: {}", authorizationHeader);
                     DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey.getBytes())).build().verify(authorizationHeader.substring("Bearer ".length()));
                     String username = decodedJWT.getSubject();
                     var userDetails = userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));

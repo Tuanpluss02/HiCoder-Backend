@@ -146,7 +146,7 @@
             stompClient.subscribe("/user/topic", (message) => {
                 const data = JSON.parse(message.body);
                 console.log(data);
-                $("#tbody").append(`<tr><td>${data.message}</td><td>${data.from}</td></tr>`)
+                $("#tbody").append(`<tr><td>${data.content}</td><td>${data.sender}</td></tr>`)
 
             });
         });
@@ -156,10 +156,10 @@
 
     $("#send-form").submit((e) => {
         e.preventDefault();
-        stompClient.send("/chat/send", {}, JSON.stringify({
-            to: $("#username").val(),
-            message: $("#message").val(),
-            from: getItem("username")
+        stompClient.send("/chat/send", {Authorization: `Bearer ${getItem("token")}`}, JSON.stringify({
+            sender: getItem("username"),
+            content: $("#message").val(),
+            receiver: $("#username").val()
         }));
 
         $("#username").val("");

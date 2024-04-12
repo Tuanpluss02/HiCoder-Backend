@@ -27,12 +27,16 @@ public class MessageController {
 
     @MessageMapping("/send")
     public void chat(@Payload MessageSend message) {
-        log.info("Message received: {}", message);
-        User currentUser = userService.getCurrentUser();
-        User toUser = userService.getUserById(message.getSender());
-        MessageDTO messageDTO = new MessageDTO(currentUser, message.getContent(), toUser);
-        messageService.saveMessage(messageDTO);
-        simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/topic", message);
+        try {
+            log.info("Message received: {}", message);
+            User currentUser = userService.loadUserByUsername(message.getSender());
+            User toUser = userService.loadUserByUsername(message.getSender());
+            MessageDTO messageDTO = new MessageDTO(currentUser, message.getContent(), toUser);
+            messageService.saveMessage(messageDTO);
+            simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/topic", message);
+        } catch (Exception e) {
+            log.error("Error: {}", e.getMessage());
+        }
     }
 
     @MessageMapping("/edit")
