@@ -1,5 +1,7 @@
 package com.stormx.hicoder.services.implement;
 
+import com.stormx.hicoder.common.PaginationInfo;
+import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.Comment;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.Token;
@@ -10,11 +12,16 @@ import com.stormx.hicoder.services.FollowService;
 import com.stormx.hicoder.services.NotificationService;
 import com.stormx.hicoder.services.TokenService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.stormx.hicoder.common.Utils.extractToDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -36,12 +43,14 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void newPostNotification(User user) {
        try{
-           List<User> followers = followService.getAllFollowers(user, null).getContent();
+//           List<User> followers = followService.getAllFollowers(user, PageRequest.of(0, 100)).getContent();
+           Page<User> userFollowers = followService.getAllFollowers(user, PageRequest.of(0, 100));
+           Pair<PaginationInfo, List<UserDTO>> response = extractToDTO(userFollowers, UserDTO::new);
            List<Token> allDeviceTokens = new ArrayList<>();
-           followers.forEach(follower -> {
-               allDeviceTokens.addAll(tokenService.getAllDeviceTokens(follower)) ;
-           });
-           fcmService.sendNotificationToManyDevice("New Post", "Recently, " + user.getUsername() + " posted a new post. Let's check it out!", allDeviceTokens.stream().map(Token::getToken).toList());
+//           followers.forEach(follower -> {
+//               allDeviceTokens.addAll(tokenService.getAllDeviceTokens(follower)) ;
+//           });
+//           fcmService.sendNotificationToManyDevice("New Post", "Recently, " + user.getUsername() + " posted a new post. Let's check it out!", allDeviceTokens.stream().map(Token::getToken).toList());
        } catch (Exception e){
           throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while sending notification");
        }

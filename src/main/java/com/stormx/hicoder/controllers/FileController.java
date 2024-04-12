@@ -4,12 +4,14 @@ import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.helpers.ResponseFile;
 import com.stormx.hicoder.entities.FileDB;
 import com.stormx.hicoder.services.FileStorageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "File Controller", description = "Include method to manage file")
 public class FileController {
 
     private final FileStorageService storageService;
@@ -44,6 +47,7 @@ public class FileController {
     }
 
     @GetMapping("/api/v1/media/files")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ResponseFile>> getListFiles() {
         List<ResponseFile> files = storageService.getAllFiles().map(dbFile -> {
             String fileDownloadUri = ServletUriComponentsBuilder

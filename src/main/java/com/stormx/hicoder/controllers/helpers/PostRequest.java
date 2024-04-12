@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
 
 @Builder
@@ -23,4 +24,7 @@ public class PostRequest {
     @NotEmpty(message = "Content is required")
     @Size(min = 5, message = "Content must be at least 5 characters")
     private String content;
+
+    @URL(message = "Invalid URL")
+    private String mediaUrl = "";
 }
