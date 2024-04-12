@@ -26,7 +26,7 @@ public class MessageController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    @MessageMapping("/chat")
+    @MessageMapping("/send")
     public void chat(@Payload MessageSend message) {
         log.info("Message received: {}", message);
         simpMessagingTemplate.convertAndSendToUser(message.to(), "/topic", message);

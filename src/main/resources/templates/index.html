@@ -154,7 +154,7 @@
 
     $("#send-form").submit((e) => {
         e.preventDefault();
-        stompClient.send("/app/chat", {}, JSON.stringify({
+        stompClient.send("/api/v1/chat/send", {}, JSON.stringify({
             to: $("#username").val(),
             message: $("#message").val(),
             from: getItem("username")

@@ -22,7 +22,7 @@ public class SecurityConfiguration {
 
     private static final String[] WHITE_LIST_URL = {
             "/ws/**",
-            "/index.html",
+            "/ui/**",
             "/api/v1/auth/**",
             "/h2-console/**",
             "/h2-console",

@@ -42,8 +42,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String[] WHITE_LIST_URL = {
                 "/ws",
                 "/ui",
-                "/favicon",
-                "/index.html",
                 "/api/v1/auth/",
                 "/h2-console/",
                 "/h2-console",
