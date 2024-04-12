@@ -1,6 +1,6 @@
 package com.stormx.hicoder.services.implement;
 
-import com.stormx.hicoder.controllers.requests.MessageEdit;
+import com.stormx.hicoder.controllers.helpers.MessageEdit;
 import com.stormx.hicoder.dto.MessageDTO;
 import com.stormx.hicoder.entities.Message;
 import com.stormx.hicoder.entities.User;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

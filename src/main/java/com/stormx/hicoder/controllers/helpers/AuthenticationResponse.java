@@ -1,4 +1,4 @@
-package com.stormx.hicoder.controllers.requests;
+package com.stormx.hicoder.controllers.helpers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

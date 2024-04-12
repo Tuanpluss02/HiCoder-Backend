@@ -1,7 +1,7 @@
 package com.stormx.hicoder.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.stormx.hicoder.controllers.requests.CommentRequest;
+import com.stormx.hicoder.controllers.helpers.CommentRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

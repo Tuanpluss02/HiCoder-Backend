@@ -1,6 +1,6 @@
 package com.stormx.hicoder.services.implement;
 
-import com.stormx.hicoder.controllers.requests.PostRequest;
+import com.stormx.hicoder.controllers.helpers.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;

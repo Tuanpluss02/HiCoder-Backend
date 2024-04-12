@@ -9,6 +9,7 @@ import com.stormx.hicoder.entities.Comment;
 import com.stormx.hicoder.entities.Follow;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.FollowService;
+import com.stormx.hicoder.services.NotificationService;
 import com.stormx.hicoder.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,12 +34,14 @@ public class FollowController {
 
     private final FollowService followService;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @PostMapping("/{userId}")
     public ResponseEntity<SuccessResponse> followNewUser(@PathVariable String userId, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         User targetUser = userService.getUserById(userId);
         followService.followOperation(currentUser, targetUser);
+        notificationService.newFollowNotification(targetUser, currentUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK,"Follow user successfully", request.getRequestURI()));
     }
 

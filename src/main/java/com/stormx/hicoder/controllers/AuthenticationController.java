@@ -1,9 +1,9 @@
 package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.controllers.requests.AuthenticationRequest;
-import com.stormx.hicoder.controllers.requests.AuthenticationResponse;
-import com.stormx.hicoder.controllers.requests.ResetPasswordRequest;
+import com.stormx.hicoder.controllers.helpers.AuthenticationRequest;
+import com.stormx.hicoder.controllers.helpers.AuthenticationResponse;
+import com.stormx.hicoder.controllers.helpers.ResetPasswordRequest;
 import com.stormx.hicoder.services.AuthenticationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;

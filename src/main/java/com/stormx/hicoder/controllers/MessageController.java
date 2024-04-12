@@ -2,11 +2,9 @@ package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.PaginationInfo;
 import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.controllers.requests.MessageEdit;
+import com.stormx.hicoder.controllers.helpers.MessageEdit;
 import com.stormx.hicoder.dto.MessageDTO;
-import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Message;
-import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.MessageService;
 import com.stormx.hicoder.services.UserService;
@@ -19,8 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

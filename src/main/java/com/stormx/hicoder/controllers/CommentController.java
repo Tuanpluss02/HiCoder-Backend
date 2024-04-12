@@ -3,12 +3,13 @@ package com.stormx.hicoder.controllers;
 import com.stormx.hicoder.common.PaginationInfo;
 import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.controllers.requests.CommentRequest;
+import com.stormx.hicoder.controllers.helpers.CommentRequest;
 import com.stormx.hicoder.dto.CommentDTO;
 import com.stormx.hicoder.entities.Comment;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.CommentService;
+import com.stormx.hicoder.services.NotificationService;
 import com.stormx.hicoder.services.PostService;
 import com.stormx.hicoder.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +38,7 @@ public class CommentController {
     private final UserService userService;
     private final PostService postService;
     private final CommentService commentService;
+    private final NotificationService notificationService;
 
     @PostMapping()
     public ResponseEntity<SuccessResponse> createNewComment(@PathVariable String postId,
@@ -44,6 +46,7 @@ public class CommentController {
         User currentUser = userService.getCurrentUser();
         Post postToComment = postService.getPostById(postId);
         CommentDTO response = commentService.createComment(commentRequest, currentUser, postToComment);
+        notificationService.newCommentNotification(currentUser, postToComment);
         return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED,
                 "Create new comment successfully", request.getRequestURI(), response));
     }
@@ -86,6 +89,8 @@ public class CommentController {
     public ResponseEntity<SuccessResponse> likeComment(@PathVariable String commentId, @PathVariable String postId, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         boolean response = commentService.likeCommentOperation(commentId, currentUser);
+        if(response)
+            notificationService.newCommendLikeNotification(currentUser, commentService.getCommentById(commentId));
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, (response ? "Like" : "Unlike") + " comment successfully", request.getRequestURI(), null));
 
     }
