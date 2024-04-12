@@ -147,7 +147,6 @@
                 const data = JSON.parse(message.body);
                 console.log(data);
                 $("#tbody").append(`<tr><td>${data.content}</td><td>${data.sender}</td></tr>`)
-
             });
         });
     });
@@ -156,7 +155,7 @@
 
     $("#send-form").submit((e) => {
         e.preventDefault();
-        stompClient.send("/chat/send", {Authorization: `Bearer ${getItem("token")}`}, JSON.stringify({
+        stompClient.send("/api/v1/chat/send", {}, JSON.stringify({
             sender: getItem("username"),
             content: $("#message").val(),
             receiver: $("#username").val()

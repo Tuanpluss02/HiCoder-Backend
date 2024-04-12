@@ -34,11 +34,11 @@ public class Message {
     @CreationTimestamp
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "send_date")
+    @Column(name = "send_at")
     private Timestamp sendAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "edited_date")
+    @Column(name = "edited_at")
     private Timestamp editedAt;
 
     public boolean isSendBy(User user) {

@@ -7,24 +7,30 @@ import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.MessageRepository;
 import com.stormx.hicoder.services.MessageService;
+import com.stormx.hicoder.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
-
+    private final UserService userService;
 
     @Override
     public void saveMessage(MessageDTO message) {
+        User currentUser = userService.loadUserByUsername(message.getSender());
+        User receiver = userService.loadUserByUsername(message.getReceiver());
         Message newMessage = new Message();
         newMessage.setContent(message.getContent());
-        newMessage.setSender(message.getSender());
-        newMessage.setReceiver(message.getReceiver());
+        newMessage.setSender(currentUser);
+        newMessage.setReceiver(receiver);
         newMessage.setSendAt(Timestamp.valueOf(LocalDateTime.now()));
         newMessage.setEditedAt(Timestamp.valueOf(LocalDateTime.now()));
         messageRepository.save(newMessage);
@@ -48,5 +54,10 @@ public class MessageServiceImpl implements MessageService {
         newMessage.setContent(message.getNewContent());
         newMessage.setEditedAt(Timestamp.valueOf(LocalDateTime.now()));
         messageRepository.save(newMessage);
+    }
+
+    @Override
+    public Page<Message> getMessages(User currentUser, User receiver, Pageable pageable) {
+        return messageRepository.findAllBySenderAndReceiver(currentUser, receiver, pageable);
     }
 }
