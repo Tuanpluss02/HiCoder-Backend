@@ -1,4 +1,4 @@
-package com.stormx.hicoder.dto;
+package com.stormx.hicoder.controllers.helpers;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RequestResetPasswordDTO {
+public class ResetPasswordRequest {
     @Email
     @NotNull(message = "Email is require")
     @NotBlank(message = "Email is require")

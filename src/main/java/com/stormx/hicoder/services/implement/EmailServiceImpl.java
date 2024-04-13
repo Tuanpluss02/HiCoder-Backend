@@ -14,9 +14,6 @@ import org.thymeleaf.context.Context;
 
 @Service
 public class EmailServiceImpl implements EmailService {
-
-
-
     private JavaMailSender mailSender;
     private TemplateEngine templateEngine;
 

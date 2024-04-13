@@ -1,33 +1,39 @@
 package com.stormx.hicoder.controllers;
 
-import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.common.ResponseGeneral;
+import com.stormx.hicoder.common.SuccessResponse;
+import com.stormx.hicoder.dto.UserDTO;
+import com.stormx.hicoder.entities.User;
+import com.stormx.hicoder.services.TokenService;
 import com.stormx.hicoder.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "api/v1/user",
-        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-)
+@RequestMapping(path = "api/v1/user")
+@RequiredArgsConstructor
+@Tag(name = "User Controller", description = "Include methods to modify, get user information")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final TokenService tokenService;
 
     @GetMapping("/me")
     ResponseEntity<ResponseGeneral> getCurrentUserDetail(HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", request.getRequestURI(), currentUser));
+        UserDTO response = new UserDTO(currentUser);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", request.getRequestURI(), response));
     }
 
+    @PostMapping("/notification")
+    ResponseEntity<ResponseGeneral> pushRegistrationToken(@RequestBody String token, HttpServletRequest request) {
+        User currentUser = userService.getCurrentUser();
+        tokenService.saveDeviceToken(currentUser, token);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Save device token successfully", request.getRequestURI()));
+    }
 
 }

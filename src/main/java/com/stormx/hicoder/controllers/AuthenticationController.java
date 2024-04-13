@@ -1,56 +1,51 @@
 package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.dto.AuthenticationRequest;
-import com.stormx.hicoder.dto.RequestResetPasswordDTO;
-import com.stormx.hicoder.exceptions.ValidationException;
+import com.stormx.hicoder.controllers.helpers.AuthenticationRequest;
+import com.stormx.hicoder.controllers.helpers.AuthenticationResponse;
+import com.stormx.hicoder.controllers.helpers.ResetPasswordRequest;
 import com.stormx.hicoder.services.AuthenticationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping(path = "/api/v1/auth",
-        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-)
-//@CrossOrigin(origins = "*")
+@RequestMapping(path = "/api/v1/auth")
+@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Include method for login, sign up,...")
+@SecurityRequirements()
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping(path = "/login")
-    public ResponseEntity<?> userLogin(@Valid AuthenticationRequest authenticationRequest, BindingResult bindingResult, HttpServletRequest request) throws ValidationException {
-        checkValidRequest(bindingResult);
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Login successfully", request.getRequestURI(), authenticationService.authenticate(authenticationRequest)));
+    public ResponseEntity<?> userLogin(@RequestBody @Valid AuthenticationRequest authenticationRequest, HttpServletRequest request) {
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(authenticationRequest);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Login successfully", request.getRequestURI(), authenticationResponse));
     }
 
     @PostMapping(path = "/register")
-    public ResponseEntity<?> userRegister(@Valid AuthenticationRequest authenticationRequest, BindingResult bindingResult, HttpServletRequest request) throws ValidationException {
-        checkValidRequest(bindingResult);
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Register successfully", request.getRequestURI(), authenticationService.register(authenticationRequest)));
+    public ResponseEntity<?> userRegister(@RequestBody @Valid AuthenticationRequest authenticationRequest, HttpServletRequest request) {
+        AuthenticationResponse authenticationResponse = authenticationService.register(authenticationRequest);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Register successfully", request.getRequestURI(), authenticationResponse));
     }
 
-    @PostMapping("/send-mail-rspwd")
-    public ResponseEntity<?> sendEmailResetPassword(@Valid RequestResetPasswordDTO requestResetPasswordDTO, BindingResult bindingResult, HttpServletRequest request) throws ValidationException {
-        checkValidRequest(bindingResult);
-        authenticationService.sendEmailResetPassword(requestResetPasswordDTO);
+    @PostMapping("/send-mail-rsp")
+    public ResponseEntity<?> sendEmailResetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest, HttpServletRequest request) {
+        authenticationService.sendEmailResetPassword(resetPasswordRequest);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Send email reset password successfully", request.getRequestURI(), null));
     }
 
     @PostMapping("/reset-password")
-    public void verifyAndChangePwd(@RequestParam("token") String token) {
-
+    public String verifyAndChangePwd(@RequestParam("token") String token) {
+        return token;
     }
 
 
@@ -58,15 +53,8 @@ public class AuthenticationController {
     public ResponseEntity<?> refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
-    )  {
+    ) {
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get new access token successfully", request.getRequestURI(), authenticationService.getNewAccessToken(request, response)));
-    }
-
-    private static void checkValidRequest(BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
-            throw new ValidationException(errors.get(0));
-        }
     }
 
 }

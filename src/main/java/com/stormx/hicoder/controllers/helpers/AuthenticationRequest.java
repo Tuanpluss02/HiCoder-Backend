@@ -1,4 +1,4 @@
-package com.stormx.hicoder.dto;
+package com.stormx.hicoder.controllers.helpers;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;

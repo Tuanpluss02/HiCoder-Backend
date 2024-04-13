@@ -1,9 +1,9 @@
-README.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 developer.properties
+firebase-adminsdk.json
 /src/main/resources/developer.properties
 ### STS ###
 .apt_generated
