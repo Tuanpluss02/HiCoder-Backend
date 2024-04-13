@@ -20,7 +20,6 @@ services:
     ports:
       - '5432:5432'
 
-
   redis-hicoder:
     image: 'redis:latest'
     networks:
@@ -31,6 +30,7 @@ services:
     ports:
       - '6379:6379'
 
+
 #  hicoder-backend:
 #    restart: always
 #    build:
@@ -40,7 +40,7 @@ services:
 #    networks:
 #      - hicoder-network
 #    depends_on:
-#      - mysql-hicoder
+#      - postgres-hicoder
 #      - redis-hicoder
 #
 #
