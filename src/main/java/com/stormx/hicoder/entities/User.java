@@ -46,13 +46,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
-    private List<Message> sentMessages = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
-    private List<Message> receivedMessages = new ArrayList<>();
 
 
     @JsonIgnore
@@ -93,7 +86,6 @@ public class User implements UserDetails {
         return true;
     }
 
-
     public void addPost(Post post) {
         this.posts.add(post);
     }
@@ -110,55 +102,4 @@ public class User implements UserDetails {
         this.comments.remove(comment);
     }
 
-    public boolean isPostedBy(Post post) {
-        return this.posts.contains(post);
-    }
-
-    public void addLikedPost(Post post) {
-        this.likedPosts.add(post);
-    }
-
-    public void removeLikedPost(Post post) {
-        this.likedPosts.remove(post);
-    }
-
-    public boolean isLikedPost(Post post) {
-        return this.likedPosts.contains(post);
-    }
-
-    public void addLikedComment(Comment comment) {
-        this.likedComments.add(comment);
-    }
-
-    public void removeLikedComment(Comment comment) {
-        this.likedComments.remove(comment);
-    }
-
-    public boolean isLikedComment(Comment comment) {
-        return this.likedComments.contains(comment);
-    }
-
-    public void addSentMessage(Message message) {
-        this.sentMessages.add(message);
-    }
-
-    public void removeSentMessage(Message message) {
-        this.sentMessages.remove(message);
-    }
-
-    public boolean isSentMessage(Message message) {
-        return this.sentMessages.contains(message);
-    }
-
-    public void addReceivedMessage(Message message) {
-        this.receivedMessages.add(message);
-    }
-
-    public void removeReceivedMessage(Message message) {
-        this.receivedMessages.remove(message);
-    }
-
-    public boolean isReceivedMessage(Message message) {
-        return this.receivedMessages.contains(message);
-    }
 }

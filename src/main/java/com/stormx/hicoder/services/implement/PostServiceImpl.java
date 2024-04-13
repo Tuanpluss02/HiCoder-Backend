@@ -1,12 +1,13 @@
 package com.stormx.hicoder.services.implement;
 
-import com.stormx.hicoder.controllers.requests.PostRequest;
+import com.stormx.hicoder.controllers.helpers.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.PostRepository;
 import com.stormx.hicoder.repositories.UserRepository;
+import com.stormx.hicoder.services.FollowService;
 import com.stormx.hicoder.services.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,12 +17,14 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final FollowService followService;
 
     @Override
     public boolean likePostOperation(String postId, User currentUser) {
@@ -89,8 +92,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getPostNewsFeed(User currentUser, PageRequest pageRequest) {
-        //TODO: implement this
-        return null;
+        List<User> followings = followService.getAllFollowings(currentUser, PageRequest.of(0, 100)).getContent();
+        return postRepository.findAllByAuthorInOrderByCreatedAtDesc(followings, pageRequest);
     }
 
 }

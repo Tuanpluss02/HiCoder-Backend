@@ -21,7 +21,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
 
     private static final String[] WHITE_LIST_URL = {
+            "/ws/**",
+            "/index.html",
             "/api/v1/auth/**",
+            "/files/**",
             "/h2-console/**",
             "/h2-console",
             "/swagger-resources",
@@ -40,8 +43,8 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req ->
+        http.csrf(AbstractHttpConfigurer::disable).
+                authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
                                 .anyRequest()
