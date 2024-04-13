@@ -6,6 +6,7 @@ import com.stormx.hicoder.controllers.helpers.MessageEdit;
 import com.stormx.hicoder.dto.MessageDTO;
 import com.stormx.hicoder.entities.Message;
 import com.stormx.hicoder.entities.User;
+import com.stormx.hicoder.services.ConversationService;
 import com.stormx.hicoder.services.MessageService;
 import com.stormx.hicoder.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
