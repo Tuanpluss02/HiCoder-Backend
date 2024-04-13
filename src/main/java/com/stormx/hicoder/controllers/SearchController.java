@@ -43,24 +43,23 @@ public class SearchController {
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search messages successfully", request.getRequestURI(), searchMessages));
     }
 
-    @GetMapping("/messages")
+    @GetMapping("/messages/user")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> searchMessagesAdmin(@RequestParam String sender, @RequestParam String content, HttpServletRequest request) {
+    public ResponseEntity<?> searchMessagesAdminOneUser(@RequestParam String sender, @RequestParam String content, HttpServletRequest request) {
         List<MessageElastic> searchElastic =  messageElasticService.searchMessages(sender, content);
         List<MessageDTO> searchMessages = searchElastic.stream().map(MessageDTO::fromMessageElastic).toList();
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search messages successfully", request.getRequestURI(), searchMessages));
     }
 
-    @GetMapping("/messages")
+    @GetMapping("/messages/both")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> searchMessagesAdmin(@RequestParam String sender, @RequestParam String receiver, @RequestParam String content, HttpServletRequest request) {
+    public ResponseEntity<?> searchMessagesAdminTwoUser(@RequestParam String sender, @RequestParam String receiver, @RequestParam String content, HttpServletRequest request) {
         List<MessageElastic> searchElastic =  messageElasticService.searchMessages(sender, receiver, content);
         List<MessageDTO> searchMessages = searchElastic.stream().map(MessageDTO::fromMessageElastic).toList();
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search messages successfully", request.getRequestURI(), searchMessages));
     }
 
-    @GetMapping("/messages")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/messages/current")
     public ResponseEntity<?> searchMessagesCurrentUser(@RequestParam String receiver, @RequestParam String content, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         List<MessageElastic> searchElastic =  messageElasticService.searchMessages(currentUser.getId(), receiver, content);
