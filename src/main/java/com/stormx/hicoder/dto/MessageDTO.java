@@ -1,20 +1,22 @@
 package com.stormx.hicoder.dto;
 
+import com.stormx.hicoder.elastic.entities.MessageElastic;
 import com.stormx.hicoder.entities.Message;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.modelmapper.ModelMapper;
 
 @Setter
 @Getter
 @Data
 public class MessageDTO {
+    private String id;
     private String sender;
     private String content;
     private String receiver;
     private String sendAt;
     private String updatedAt;
-
 
     public MessageDTO(String sender, String content, String receiver) {
         this.sender = sender;
@@ -22,11 +24,13 @@ public class MessageDTO {
         this.receiver = receiver;
     }
 
-    public MessageDTO(Message message) {
-        this.sender = message.getSender().getId();
-        this.content = message.getContent();
-        this.receiver = message.getReceiver().getId();
-        this.sendAt = message.getSendAt().toString();
-        this.updatedAt = message.getEditedAt().toString();
+    public static MessageDTO fromMessage(Message message) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(message, MessageDTO.class);
+    }
+
+    public static MessageDTO fromMessageElastic(MessageElastic messageElastic) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(messageElastic, MessageDTO.class);
     }
 }

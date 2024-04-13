@@ -55,7 +55,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(newComment);
         postRepository.save(post);
         userRepository.save(user);
-        return new CommentDTO(newComment);
+        return CommentDTO.fromComment(newComment);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
         commentToUpdate.setContent(commentRequest.getContent());
         commentToUpdate.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         commentRepository.save(commentToUpdate);
-        return new CommentDTO(commentToUpdate);
+        return CommentDTO.fromComment(commentToUpdate);
     }
 
 

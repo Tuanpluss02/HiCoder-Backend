@@ -28,7 +28,7 @@ public class UserController {
     @GetMapping("/me")
     ResponseEntity<ResponseGeneral> getCurrentUserDetail(HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        UserDTO response = new UserDTO(currentUser);
+        UserDTO response = UserDTO.fromUser(currentUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", request.getRequestURI(), response));
     }
 
