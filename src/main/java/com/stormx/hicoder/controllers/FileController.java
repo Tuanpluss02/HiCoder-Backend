@@ -1,5 +1,5 @@
 package com.stormx.hicoder.controllers;
-
+import org.springframework.http.MediaType;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.helpers.ResponseFile;
 import com.stormx.hicoder.entities.FileDB;
@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +40,7 @@ public class FileController {
                     new SuccessResponse(HttpStatus.OK,
                             "File uploaded successfully",
                             request.getRequestURI(),
-                             "Link: " + ServletUriComponentsBuilder
+                             ServletUriComponentsBuilder
                                     .fromCurrentContextPath()
                                     .path("/files/")
                                     .path(savedFile.getId())
@@ -66,10 +70,25 @@ public class FileController {
     }
 
     @GetMapping("/files/{id}")
-    public ResponseEntity<byte[]> getFile(@PathVariable String id) {
+    public ResponseEntity<byte[]> getFileByID(@PathVariable String id) {
         FileDB fileDB = storageService.getFile(id);
+        String filename = fileDB.getName();
+        String format = filename.substring(filename.lastIndexOf(".") + 1);
+        MediaType mediaType = getMediaTypeForFileName(format);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileDB.getName() + "\"")
                 .body(fileDB.getData());
+    }
+
+
+    private MediaType getMediaTypeForFileName(String format) {
+        return switch (format.toLowerCase()) {
+            case "png" -> MediaType.IMAGE_PNG;
+            case "jpg", "jpeg" -> MediaType.IMAGE_JPEG;
+            case "gif" -> MediaType.IMAGE_GIF;
+            case "mp4" -> MediaType.valueOf("video/mp4");
+            default -> MediaType.APPLICATION_OCTET_STREAM;
+        };
     }
 }
