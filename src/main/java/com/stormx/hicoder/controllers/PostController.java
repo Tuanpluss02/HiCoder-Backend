@@ -6,8 +6,8 @@ import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.helpers.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
-import com.stormx.hicoder.elastic.PostElastic;
-import com.stormx.hicoder.elastic.PostElasticService;
+import com.stormx.hicoder.elastic.entities.PostElastic;
+import com.stormx.hicoder.elastic.services.PostElasticService;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.NotificationService;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.stormx.hicoder.common.Utils.calculatePageable;
 import static com.stormx.hicoder.common.Utils.extractToDTO;

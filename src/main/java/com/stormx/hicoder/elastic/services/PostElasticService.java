@@ -1,8 +1,7 @@
-package com.stormx.hicoder.elastic;
+package com.stormx.hicoder.elastic.services;
 
-import com.stormx.hicoder.controllers.helpers.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
-import com.stormx.hicoder.entities.User;
+import com.stormx.hicoder.elastic.entities.PostElastic;
 
 import java.util.List;
 

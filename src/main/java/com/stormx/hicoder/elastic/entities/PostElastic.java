@@ -1,5 +1,4 @@
-package com.stormx.hicoder.elastic;
-import com.stormx.hicoder.controllers.helpers.PostRequest;
+package com.stormx.hicoder.elastic.entities;
 import com.stormx.hicoder.dto.PostDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;

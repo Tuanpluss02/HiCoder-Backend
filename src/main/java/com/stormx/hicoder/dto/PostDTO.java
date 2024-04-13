@@ -1,6 +1,6 @@
 package com.stormx.hicoder.dto;
 
-import com.stormx.hicoder.elastic.PostElastic;
+import com.stormx.hicoder.elastic.entities.PostElastic;
 import com.stormx.hicoder.entities.Post;
 import lombok.AllArgsConstructor;
 import lombok.Data;
