@@ -1,8 +1,8 @@
 package com.stormx.hicoder.repositories;
 
 import com.stormx.hicoder.common.TokenType;
-import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.entities.Token;
+import com.stormx.hicoder.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

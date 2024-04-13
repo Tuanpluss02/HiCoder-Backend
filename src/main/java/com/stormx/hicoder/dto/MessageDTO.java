@@ -1,7 +1,6 @@
 package com.stormx.hicoder.dto;
 
 import com.stormx.hicoder.entities.Message;
-import com.stormx.hicoder.entities.User;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

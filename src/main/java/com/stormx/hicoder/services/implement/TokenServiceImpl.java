@@ -11,7 +11,6 @@ import com.stormx.hicoder.repositories.TokenRepository;
 import com.stormx.hicoder.services.RedisService;
 import com.stormx.hicoder.services.TokenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

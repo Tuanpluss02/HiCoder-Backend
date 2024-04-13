@@ -3,10 +3,7 @@ package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.PaginationInfo;
 import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.dto.CommentDTO;
 import com.stormx.hicoder.dto.UserDTO;
-import com.stormx.hicoder.entities.Comment;
-import com.stormx.hicoder.entities.Follow;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.FollowService;
 import com.stormx.hicoder.services.NotificationService;
