@@ -52,7 +52,7 @@ public class PostServiceImpl implements PostService {
         if (!userPost.isPostedBy(currentUser)) {
             throw new BadRequestException("User doesn't have post: " + postId);
         }
-        return new PostDTO(userPost);
+        return PostDTO.fromPost(userPost);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class PostServiceImpl implements PostService {
         user.addPost(newPost);
         userRepository.save(user);
         postRepository.save(newPost);
-        return new PostDTO(newPost);
+        return  PostDTO.fromPost(newPost);
     }
 
 
@@ -76,7 +76,7 @@ public class PostServiceImpl implements PostService {
         userPosts.setTitle(postDetails.getTitle());
         userPosts.setContent(postDetails.getContent());
         postRepository.save(userPosts);
-        return new PostDTO(userPosts);
+        return PostDTO.fromPost(userPosts);
     }
 
     @Override

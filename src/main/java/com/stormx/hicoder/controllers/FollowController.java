@@ -25,7 +25,7 @@ import static com.stormx.hicoder.common.Utils.extractToDTO;
 @RestController()
 @RequestMapping(path = "api/v1/follow")
 @CrossOrigin(origins = "*")
-@Tag(name = "User Follow Controller", description = "Include method to manage user's follow")
+@Tag(name = "Follow Controller", description = "Include method to manage user's follow")
 @RequiredArgsConstructor
 public class FollowController {
 
@@ -58,7 +58,7 @@ public class FollowController {
         User currentUser = userService.getCurrentUser();
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<User> userFollowings = followService.getAllFollowings(currentUser, pageRequest);
-        Pair<PaginationInfo, List<UserDTO>> response = extractToDTO(userFollowings, UserDTO::new);
+        Pair<PaginationInfo, List<UserDTO>> response = extractToDTO(userFollowings, UserDTO::fromUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get all following successfully",
                 request.getRequestURI(), response.getLeft(), response.getRight()));
 
@@ -71,7 +71,7 @@ public class FollowController {
         User currentUser = userService.getCurrentUser();
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<User> userFollowers = followService.getAllFollowers(currentUser, pageRequest);
-        Pair<PaginationInfo, List<UserDTO>> response = extractToDTO(userFollowers, UserDTO::new);
+        Pair<PaginationInfo, List<UserDTO>> response = extractToDTO(userFollowers, UserDTO::fromUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get all followers successfully",
                 request.getRequestURI(), response.getLeft(), response.getRight()));
     }

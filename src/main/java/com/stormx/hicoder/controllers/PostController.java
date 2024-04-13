@@ -6,6 +6,7 @@ import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.helpers.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
+import com.stormx.hicoder.elastic.services.PostElasticService;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.NotificationService;
@@ -31,12 +32,13 @@ import static com.stormx.hicoder.common.Utils.extractToDTO;
 @RestController()
 @RequestMapping(path = "api/v1/post")
 @CrossOrigin(origins = "*")
-@Tag(name = "User Post Controller", description = "Include method to manage user's post")
+@Tag(name = "Post Controller", description = "Include method to manage user's post")
 @RequiredArgsConstructor
 public class PostController {
     private final UserService userService;
     private final PostService postService;
     private final NotificationService notificationService;
+    private final PostElasticService postElasticService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUserPosts(@RequestParam(defaultValue = "0") int page,
@@ -46,7 +48,7 @@ public class PostController {
         User currentUser = userService.getCurrentUser();
         PageRequest pageRequest = calculatePageable(page, size, sort, PostDTO.class, request);
         Page<Post> userPosts = postService.getAllPostsOfUser(currentUser, pageRequest);
-        Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(userPosts, PostDTO::new);
+        Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(userPosts, PostDTO::fromPost);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user's posts successfully", request.getRequestURI(), response.getLeft(), response.getRight()));
     }
 
@@ -58,7 +60,7 @@ public class PostController {
         User currentUser = userService.getCurrentUser();
         PageRequest pageRequest = calculatePageable(page, size, sort, PostDTO.class, request);
         Page<Post> postNewsFeed = postService.getPostNewsFeed(currentUser, pageRequest);
-        Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(postNewsFeed, PostDTO::new);
+        Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(postNewsFeed, PostDTO::fromPost);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get post newsfeed successfully",
                 request.getRequestURI(), response.getLeft(), response.getRight()));
     }
@@ -75,14 +77,17 @@ public class PostController {
     public ResponseEntity<?> newPost(@Valid @RequestBody PostRequest postRequest, HttpServletRequest request) throws FirebaseMessagingException {
         User currentUser = userService.getCurrentUser();
         PostDTO createdPost = postService.createPost(postRequest, currentUser);
+        postElasticService.addPost(createdPost);
         notificationService.newPostNotification(currentUser);
         return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), createdPost));
     }
+
 
     @PutMapping("/{postId}")
     public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid @RequestBody PostRequest postRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         PostDTO updatedPost = postService.updatePost(postId, postRequest, currentUser);
+        postElasticService.addPost(updatedPost);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), updatedPost));
     }
 
@@ -90,6 +95,7 @@ public class PostController {
     public ResponseEntity<SuccessResponse> deletePost(@PathVariable String postId, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         postService.deletePost(postId, currentUser);
+        postElasticService.deletePost(postId);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Delete post successfully", request.getRequestURI(), null));
     }
 

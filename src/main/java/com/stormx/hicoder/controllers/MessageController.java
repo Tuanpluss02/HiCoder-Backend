@@ -6,6 +6,7 @@ import com.stormx.hicoder.controllers.helpers.MessageEdit;
 import com.stormx.hicoder.dto.MessageDTO;
 import com.stormx.hicoder.entities.Message;
 import com.stormx.hicoder.entities.User;
+import com.stormx.hicoder.services.ConversationService;
 import com.stormx.hicoder.services.MessageService;
 import com.stormx.hicoder.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,7 +44,7 @@ public class MessageController {
         User receiver = userService.loadUserByUsername(receiverUsername);
         PageRequest pageRequest = calculatePageable(page, size, sort, MessageDTO.class, request);
         Page<Message> messages = messageService.getMessages(currentUser, receiver, pageRequest);
-        Pair<PaginationInfo, List<MessageDTO>> response = extractToDTO(messages, MessageDTO::new);
+        Pair<PaginationInfo, List<MessageDTO>> response = extractToDTO(messages, MessageDTO::fromMessage);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK,"Get messages successfully", request.getRequestURI(), response.getLeft(),response.getRight()));
     }
 
