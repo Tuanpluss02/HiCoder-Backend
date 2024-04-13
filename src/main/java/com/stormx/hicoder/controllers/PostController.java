@@ -1,12 +1,14 @@
 package com.stormx.hicoder.controllers;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.stormx.hicoder.common.PaginationInfo;
 import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.controllers.requests.PostRequest;
+import com.stormx.hicoder.controllers.helpers.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
+import com.stormx.hicoder.services.NotificationService;
 import com.stormx.hicoder.services.PostService;
 import com.stormx.hicoder.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +36,7 @@ import static com.stormx.hicoder.common.Utils.extractToDTO;
 public class PostController {
     private final UserService userService;
     private final PostService postService;
-
+    private final NotificationService notificationService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUserPosts(@RequestParam(defaultValue = "0") int page,
@@ -70,9 +72,10 @@ public class PostController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> newPost(@Valid @RequestBody PostRequest postRequest, HttpServletRequest request) {
+    public ResponseEntity<?> newPost(@Valid @RequestBody PostRequest postRequest, HttpServletRequest request) throws FirebaseMessagingException {
         User currentUser = userService.getCurrentUser();
         PostDTO createdPost = postService.createPost(postRequest, currentUser);
+        notificationService.newPostNotification(currentUser);
         return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), createdPost));
     }
 
@@ -94,6 +97,8 @@ public class PostController {
     public ResponseEntity<?> likePost(@PathVariable String postId, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         boolean response = postService.likePostOperation(postId, currentUser);
+        if (response)
+            notificationService.newPostLikeNotification(currentUser, postService.getPostById(postId));
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, (response ? "Like" : "Unlike") + " post successfully", request.getRequestURI(), null));
     }
 }

@@ -1,8 +1,8 @@
 package com.stormx.hicoder.services;
 
-import com.stormx.hicoder.controllers.requests.AuthenticationRequest;
-import com.stormx.hicoder.controllers.requests.AuthenticationResponse;
-import com.stormx.hicoder.controllers.requests.ResetPasswordRequest;
+import com.stormx.hicoder.controllers.helpers.AuthenticationRequest;
+import com.stormx.hicoder.controllers.helpers.AuthenticationResponse;
+import com.stormx.hicoder.controllers.helpers.ResetPasswordRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 

@@ -1,11 +1,8 @@
 package com.stormx.hicoder.controllers;
 
-import com.stormx.hicoder.controllers.requests.MessageEdit;
-import com.stormx.hicoder.controllers.requests.MessageSend;
+import com.stormx.hicoder.controllers.helpers.MessageSend;
 import com.stormx.hicoder.dto.MessageDTO;
-import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.MessageService;
-import com.stormx.hicoder.services.UserService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 

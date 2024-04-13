@@ -1,6 +1,6 @@
 package com.stormx.hicoder.services;
 
-import com.stormx.hicoder.controllers.requests.CommentRequest;
+import com.stormx.hicoder.controllers.helpers.CommentRequest;
 import com.stormx.hicoder.dto.CommentDTO;
 import com.stormx.hicoder.entities.Comment;
 import com.stormx.hicoder.entities.Post;

@@ -1,5 +1,6 @@
 package com.stormx.hicoder.common;
 
 public enum TokenType {
-    BEARER
+    DEVICE_TOKEN,
+    REFRESH_TOKEN,
 }
