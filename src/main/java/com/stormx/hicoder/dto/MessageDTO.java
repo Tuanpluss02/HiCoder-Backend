@@ -4,12 +4,14 @@ import com.stormx.hicoder.elastic.entities.MessageElastic;
 import com.stormx.hicoder.entities.Message;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
 @Setter
 @Getter
 @Data
+@NoArgsConstructor
 public class MessageDTO {
     private String id;
     private String sender;

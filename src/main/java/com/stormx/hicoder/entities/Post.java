@@ -5,6 +5,8 @@ import com.stormx.hicoder.controllers.helpers.PostRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.sql.Timestamp;
@@ -33,6 +35,7 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User author;
 
     private String mediaUrl;

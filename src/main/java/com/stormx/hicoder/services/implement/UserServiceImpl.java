@@ -1,5 +1,6 @@
 package com.stormx.hicoder.services.implement;
 
+import com.stormx.hicoder.common.Role;
 import com.stormx.hicoder.controllers.helpers.UpdateUserProfile;
 import com.stormx.hicoder.entities.FileDB;
 import com.stormx.hicoder.entities.User;
@@ -75,6 +76,17 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException("File is not an image");
         }
         user.setAvatarUrl(avatarUrl);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void removeUser(User user) {
+      userRepository.delete(user);
+    }
+
+    @Override
+    public void changeRole(User user, Role role) {
+        user.setRole(role);
         userRepository.save(user);
     }
 
