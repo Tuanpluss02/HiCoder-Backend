@@ -2,7 +2,6 @@ package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
-import com.stormx.hicoder.common.TokenType;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.TokenService;

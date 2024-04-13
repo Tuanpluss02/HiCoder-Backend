@@ -1,6 +1,5 @@
 package com.stormx.hicoder.services;
 
-import com.stormx.hicoder.common.TokenType;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.Token;
 import com.stormx.hicoder.entities.User;

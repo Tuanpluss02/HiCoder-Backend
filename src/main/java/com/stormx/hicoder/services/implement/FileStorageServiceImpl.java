@@ -11,9 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.Normalizer;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -21,8 +19,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class FileStorageServiceImpl implements FileStorageService {
     private final FileDBRepository fileDBRepository;
-    private static Pattern NONLATIN = Pattern.compile("[^\\w-]");
-    private static Pattern WHITESPACE = Pattern.compile("[\\s]");
     @Override
     public FileDB store(MultipartFile file) throws IOException {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));

@@ -1,7 +1,5 @@
 package com.stormx.hicoder.services.implement;
 
-import com.stormx.hicoder.common.PaginationInfo;
-import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.*;
 import com.stormx.hicoder.exceptions.AppException;
 import com.stormx.hicoder.services.FCMService;
@@ -9,17 +7,12 @@ import com.stormx.hicoder.services.FollowService;
 import com.stormx.hicoder.services.NotificationService;
 import com.stormx.hicoder.services.TokenService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static com.stormx.hicoder.common.Utils.extractToDTO;
 
 @Service
 @RequiredArgsConstructor
