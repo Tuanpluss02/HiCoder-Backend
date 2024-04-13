@@ -45,13 +45,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e.getBindingResult().getAllErrors().get(0).getDefaultMessage(), ""));
     }
 
-    @ExceptionHandler({ValidationException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(ValidationException ex, HttpServletRequest request) {
-        logger.error("Validation Error: " + ex.getLocalizedMessage());
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), request.getRequestURI());
-    }
-
     @ExceptionHandler({BadCredentialsException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadCredentialException(BadCredentialsException exception, HttpServletRequest request) {
