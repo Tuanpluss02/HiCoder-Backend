@@ -1,6 +1,7 @@
 package com.stormx.hicoder.filter;
 
 import com.stormx.hicoder.services.LoggingService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object> {
 
-    @Autowired
-    LoggingService loggingService;
+    private final LoggingService loggingService;
 
     @Override
     public boolean supports(MethodParameter methodParameter,
