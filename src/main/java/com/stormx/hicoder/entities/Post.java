@@ -80,10 +80,6 @@ public class Post {
 
     }
 
-    public boolean isLikedBy(User user) {
-        return this.likedByUsers.contains(user);
-    }
-
     public void addComment(Comment comment) {
         this.comments.add(comment);
     }
