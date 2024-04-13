@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.URL;
 @Getter
 @Setter
 public class UpdateUserProfile {
-    @Size(min = 5, message = "Display name must be at least 5 characters")
+    @Size(min = 2, message = "Display name must be at least 2 characters")
     private String displayName;
 
     @URL(message = "Invalid URL")

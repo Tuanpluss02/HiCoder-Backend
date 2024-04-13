@@ -6,6 +6,8 @@ import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.helpers.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
+import com.stormx.hicoder.elastic.PostElastic;
+import com.stormx.hicoder.elastic.PostElasticService;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.NotificationService;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.stormx.hicoder.common.Utils.calculatePageable;
 import static com.stormx.hicoder.common.Utils.extractToDTO;
@@ -37,6 +40,7 @@ public class PostController {
     private final UserService userService;
     private final PostService postService;
     private final NotificationService notificationService;
+    private final PostElasticService postElasticService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUserPosts(@RequestParam(defaultValue = "0") int page,
@@ -75,14 +79,23 @@ public class PostController {
     public ResponseEntity<?> newPost(@Valid @RequestBody PostRequest postRequest, HttpServletRequest request) throws FirebaseMessagingException {
         User currentUser = userService.getCurrentUser();
         PostDTO createdPost = postService.createPost(postRequest, currentUser);
+        postElasticService.addPost(createdPost);
         notificationService.newPostNotification(currentUser);
         return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), createdPost));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchPosts(@RequestParam String keyword, HttpServletRequest request) {
+      List<PostElastic> searchElastic =  postElasticService.searchPosts(keyword);
+      List<PostDTO> searchPosts = searchElastic.stream().map(PostDTO::new).toList();
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search posts successfully", request.getRequestURI(), searchPosts));
     }
 
     @PutMapping("/{postId}")
     public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid @RequestBody PostRequest postRequest, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         PostDTO updatedPost = postService.updatePost(postId, postRequest, currentUser);
+        postElasticService.addPost(updatedPost);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Update post successfully", request.getRequestURI(), updatedPost));
     }
 
@@ -90,6 +103,7 @@ public class PostController {
     public ResponseEntity<SuccessResponse> deletePost(@PathVariable String postId, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         postService.deletePost(postId, currentUser);
+        postElasticService.deletePost(postId);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Delete post successfully", request.getRequestURI(), null));
     }
 
