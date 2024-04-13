@@ -1,5 +1,6 @@
-package com.stormx.hicoder.elastic;
+package com.stormx.hicoder.elastic.repositories;
 
+import com.stormx.hicoder.elastic.entities.PostElastic;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 

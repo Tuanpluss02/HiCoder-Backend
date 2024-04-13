@@ -5,7 +5,6 @@ import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.helpers.UpdateUserProfile;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
-import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.services.TokenService;
 import com.stormx.hicoder.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +27,7 @@ public class UserController {
     @GetMapping("/me")
     ResponseEntity<ResponseGeneral> getCurrentUserDetail(HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        UserDTO response = new UserDTO(currentUser);
+        UserDTO response = UserDTO.fromUser(currentUser);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user detail successfully", request.getRequestURI(), response));
     }
 

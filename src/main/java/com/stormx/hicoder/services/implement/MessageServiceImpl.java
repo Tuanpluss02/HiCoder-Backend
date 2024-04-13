@@ -2,6 +2,7 @@ package com.stormx.hicoder.services.implement;
 
 import com.stormx.hicoder.controllers.helpers.MessageEdit;
 import com.stormx.hicoder.dto.MessageDTO;
+import com.stormx.hicoder.elastic.services.MessageElasticService;
 import com.stormx.hicoder.entities.Message;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
@@ -23,6 +24,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final UserService userService;
     private final NotificationService notificationService;
+    private final MessageElasticService messageElasticService;
 
     @Override
     public void saveMessage(MessageDTO message) {
@@ -34,8 +36,9 @@ public class MessageServiceImpl implements MessageService {
         newMessage.setReceiver(receiver);
         newMessage.setSendAt(Timestamp.valueOf(LocalDateTime.now()));
         newMessage.setEditedAt(Timestamp.valueOf(LocalDateTime.now()));
-        notificationService.newMessageNotification(currentUser, receiver, newMessage);
         messageRepository.save(newMessage);
+        notificationService.newMessageNotification(currentUser, receiver, newMessage);
+        messageElasticService.addMessage(message);
     }
 
     @Override
@@ -45,6 +48,7 @@ public class MessageServiceImpl implements MessageService {
             throw new BadRequestException("You are not the sender of this message");
         }
         messageRepository.delete(newMessage);
+        messageElasticService.deleteMessage(messageId);
     }
 
     @Override
@@ -56,6 +60,7 @@ public class MessageServiceImpl implements MessageService {
         newMessage.setContent(message.getNewContent());
         newMessage.setEditedAt(Timestamp.valueOf(LocalDateTime.now()));
         messageRepository.save(newMessage);
+        messageElasticService.addMessage(MessageDTO.fromMessage(newMessage));
     }
 
     @Override

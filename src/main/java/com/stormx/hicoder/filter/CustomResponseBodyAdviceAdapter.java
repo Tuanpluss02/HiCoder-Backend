@@ -2,7 +2,6 @@ package com.stormx.hicoder.filter;
 
 import com.stormx.hicoder.services.LoggingService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
