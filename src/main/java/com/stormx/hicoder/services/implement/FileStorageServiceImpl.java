@@ -1,6 +1,7 @@
 package com.stormx.hicoder.services.implement;
 
 import com.stormx.hicoder.entities.FileDB;
+import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.FileDBRepository;
 import com.stormx.hicoder.services.FileStorageService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Objects;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 @Service
@@ -34,7 +34,11 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     @Override
     public FileDB getFile(String id) {
-        return fileDBRepository.findById(id).get();
+        FileDB file = fileDBRepository.findById(id).isPresent() ? fileDBRepository.findById(id).get(): null;
+        if(file == null) {
+            throw new BadRequestException("File not found");
+        }
+        return file;
     }
 
     @Override

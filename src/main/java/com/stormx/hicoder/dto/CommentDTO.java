@@ -3,6 +3,7 @@ package com.stormx.hicoder.dto;
 import com.stormx.hicoder.entities.Comment;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 @Data
 @NoArgsConstructor
@@ -14,13 +15,9 @@ public class CommentDTO {
     private String updatedAt;
     private long likesCount;
 
-    public CommentDTO(Comment comment) {
-        this.id = comment.getId();
-        this.content = comment.getContent();
-        this.author = comment.getAuthor().getId();
-        this.likesCount = comment.getLikedByUsers().size();
-        this.updatedAt = comment.getUpdatedAt().toString();
-        this.createdAt = comment.getCreatedAt().toString();
+    public static CommentDTO fromComment(Comment comment) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(comment, CommentDTO.class);
     }
 
 }

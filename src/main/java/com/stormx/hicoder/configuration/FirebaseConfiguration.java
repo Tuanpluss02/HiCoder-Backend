@@ -16,7 +16,7 @@ import java.io.InputStream;
 public class FirebaseConfiguration {
 
     private final FirebaseProperties firebaseProperties;
-    private FirebaseApp firebaseApp; // Add this line
+    private FirebaseApp firebaseApp;
     public FirebaseConfiguration(FirebaseProperties firebaseProperties) {
         this.firebaseProperties = firebaseProperties;
     }
@@ -40,7 +40,7 @@ public class FirebaseConfiguration {
 
     @Bean
     FirebaseApp firebaseApp(GoogleCredentials credentials) {
-        if (firebaseApp == null) { // Add this check
+        if (firebaseApp == null) {
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(credentials)
                     .build();

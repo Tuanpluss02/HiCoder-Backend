@@ -3,13 +3,11 @@ package com.stormx.hicoder.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.stormx.hicoder.common.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +27,22 @@ public class User implements UserDetails {
     @Getter
     private String username;
 
+    @Getter
+    @Setter
+    private String displayName;
+
+    @Getter
+    @Setter
+    private String avatarUrl;
+
+    @Getter
+    @Setter
+    private LocalDate birthday;
+
+    @Getter
+    @Setter
+    private String about;
+
     @Column(nullable = false)
     @JsonIgnore
     @Getter
@@ -46,7 +60,11 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> followers;
 
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> followings;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "likedByUsers", cascade = CascadeType.ALL)
@@ -56,7 +74,20 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "likedByUsers", cascade = CascadeType.ALL)
     private List<Comment> likedComments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> sentMessages;
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> receivedMessages;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Conversation> sentConversations;
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Conversation> receivedConversations;
+
     @Getter
+    @Setter
     @Enumerated(EnumType.STRING)
     private Role role;
 

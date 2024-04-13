@@ -36,6 +36,7 @@ Here are some of the available endpoints:
 - `/api/v1/{post}/like` - Handles post liking functionalities.
 - `/api/v1/media` - Manages media files, such as images and videos.
 - `/api/v1/user` - Provides user-related functionalities, such as updating user information and retrieving user details.
-
+- Websocket UI Testing: http://localhost:8080/ui/chat/.
+  
 Please refer to the source code and API documentation for more detailed information on the available endpoints and their
-usage.
+usage. Visit the Swagger UI at http://localhost:8080/swagger-ui/index.html to explore the available APIs interactively.

@@ -32,7 +32,7 @@ import static com.stormx.hicoder.common.Utils.extractToDTO;
 @RestController()
 @RequestMapping(path = "api/v1/post/{postId}/comment")
 @CrossOrigin(origins = "*")
-@Tag(name = "User Comment Controller", description = "Include method to manage user's comment")
+@Tag(name = "Comment Controller", description = "Include method to manage user's comment")
 @RequiredArgsConstructor
 public class CommentController {
     private final UserService userService;
@@ -70,7 +70,7 @@ public class CommentController {
         PageRequest pageRequest = calculatePageable(page, size, sort, CommentDTO.class, request);
         Post postToGetComment = postService.getPostById(postId);
         Page<Comment> commentPage = commentService.getAllCommentsOfPost(postToGetComment, pageRequest);
-        Pair<PaginationInfo, List<CommentDTO>> response = extractToDTO(commentPage, CommentDTO::new);
+        Pair<PaginationInfo, List<CommentDTO>> response = extractToDTO(commentPage, CommentDTO::fromComment);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get comments for post successfully",
                 request.getRequestURI(), response.getLeft(), response.getRight()));
     }

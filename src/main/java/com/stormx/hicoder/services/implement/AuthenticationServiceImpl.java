@@ -74,7 +74,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private AuthenticationResponse getAuthenticationResponse(User user, Collection<SimpleGrantedAuthority> authorities) {
-        UserDTO userDTO = new UserDTO(user);
+        UserDTO userDTO = UserDTO.fromUser(user);
         String jwtToken = tokenService.generateToken(userDTO, authorities);
         String refreshToken = tokenService.generateRefreshToken(userDTO, authorities);
         return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).role(user.getRole().toString()).accessToken(jwtToken).refreshToken(refreshToken).build();

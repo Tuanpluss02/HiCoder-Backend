@@ -1,9 +1,11 @@
 package com.stormx.hicoder.dto;
 
+import com.stormx.hicoder.elastic.entities.PostElastic;
 import com.stormx.hicoder.entities.Post;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 @Data
 @AllArgsConstructor
@@ -15,16 +17,16 @@ public class PostDTO {
     private String content;
     private String author;
     private String createdAt;
+    private String mediaUrl;
     private long likesCount;
     private long commentsCount;
 
-    public PostDTO(Post post) {
-        this.id = post.getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.author = post.getAuthor().getId();
-        this.likesCount = post.getLikedByUsers().size();
-        this.commentsCount = post.getComments().size();
-        this.createdAt = post.getCreatedAt().toString();
+    public static PostDTO fromPost(Post post) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(post, PostDTO.class);
+    }
+    public static PostDTO fromPostElastic(PostElastic postElastic) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(postElastic, PostDTO.class);
     }
 }
