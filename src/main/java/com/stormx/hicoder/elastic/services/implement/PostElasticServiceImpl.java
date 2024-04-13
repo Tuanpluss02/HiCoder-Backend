@@ -21,7 +21,7 @@ public class PostElasticServiceImpl implements PostElasticService {
 
     @Override
     public void addPost(PostDTO post) {
-        PostElastic postElastic = new PostElastic(post);
+        PostElastic postElastic = PostElastic.fromPostDTO(post);
         postRepository.save(postElastic);
     }
 

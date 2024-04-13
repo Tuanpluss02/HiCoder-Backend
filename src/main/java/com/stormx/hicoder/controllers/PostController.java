@@ -6,7 +6,6 @@ import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.helpers.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
-import com.stormx.hicoder.elastic.entities.PostElastic;
 import com.stormx.hicoder.elastic.services.PostElasticService;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;
@@ -49,7 +48,7 @@ public class PostController {
         User currentUser = userService.getCurrentUser();
         PageRequest pageRequest = calculatePageable(page, size, sort, PostDTO.class, request);
         Page<Post> userPosts = postService.getAllPostsOfUser(currentUser, pageRequest);
-        Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(userPosts, PostDTO::new);
+        Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(userPosts, PostDTO::fromPost);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user's posts successfully", request.getRequestURI(), response.getLeft(), response.getRight()));
     }
 
@@ -61,7 +60,7 @@ public class PostController {
         User currentUser = userService.getCurrentUser();
         PageRequest pageRequest = calculatePageable(page, size, sort, PostDTO.class, request);
         Page<Post> postNewsFeed = postService.getPostNewsFeed(currentUser, pageRequest);
-        Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(postNewsFeed, PostDTO::new);
+        Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(postNewsFeed, PostDTO::fromPost);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get post newsfeed successfully",
                 request.getRequestURI(), response.getLeft(), response.getRight()));
     }
@@ -83,12 +82,6 @@ public class PostController {
         return ResponseEntity.created(URI.create(request.getRequestURI())).body(new SuccessResponse(HttpStatus.CREATED, "Create new post successfully", request.getRequestURI(), createdPost));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<?> searchPosts(@RequestParam String keyword, HttpServletRequest request) {
-      List<PostElastic> searchElastic =  postElasticService.searchPosts(keyword);
-      List<PostDTO> searchPosts = searchElastic.stream().map(PostDTO::new).toList();
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search posts successfully", request.getRequestURI(), searchPosts));
-    }
 
     @PutMapping("/{postId}")
     public ResponseEntity<SuccessResponse> updatePost(@PathVariable String postId, @Valid @RequestBody PostRequest postRequest, HttpServletRequest request) {

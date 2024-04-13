@@ -8,6 +8,5 @@ import java.util.List;
 public interface PostElasticService {
     List<PostElastic> searchPosts(String keyword);
     void addPost(PostDTO post);
-
     void deletePost(String postId);
 }
