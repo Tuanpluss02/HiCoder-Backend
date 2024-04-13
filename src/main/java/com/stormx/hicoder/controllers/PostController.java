@@ -32,7 +32,7 @@ import static com.stormx.hicoder.common.Utils.extractToDTO;
 @RestController()
 @RequestMapping(path = "api/v1/post")
 @CrossOrigin(origins = "*")
-@Tag(name = "User Post Controller", description = "Include method to manage user's post")
+@Tag(name = "Post Controller", description = "Include method to manage user's post")
 @RequiredArgsConstructor
 public class PostController {
     private final UserService userService;
