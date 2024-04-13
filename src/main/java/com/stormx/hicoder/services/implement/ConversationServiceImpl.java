@@ -1,5 +1,6 @@
 package com.stormx.hicoder.services.implement;
 
+import com.stormx.hicoder.dto.ConversationDTO;
 import com.stormx.hicoder.entities.Conversation;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.repositories.ConversationRepository;
@@ -14,8 +15,8 @@ import java.util.List;
 public class ConversationServiceImpl implements ConversationService {
     private final ConversationRepository conversationRepository;
     @Override
-    public List<Conversation> getConversations(User user) {
-        return conversationRepository.findAllBySender(user);
+    public List<ConversationDTO> getConversations(User user) {
+        return conversationRepository.findAllBySender(user).stream().map(ConversationDTO::fromConversation).toList();
     }
 
     @Override
@@ -27,7 +28,11 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
-    public void deleteConversation(String conversationId) {
+    public void deleteConversation(String conversationId, User user) {
+        Conversation conversation = conversationRepository.findById(conversationId).orElseThrow(() -> new RuntimeException("Conversation not found"));
+        if (!conversation.getSender().equals(user)) {
+            throw new RuntimeException("You are not the own of this conversation");
+        }
         conversationRepository.deleteById(conversationId);
 
     }

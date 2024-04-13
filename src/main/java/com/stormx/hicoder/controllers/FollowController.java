@@ -25,7 +25,7 @@ import static com.stormx.hicoder.common.Utils.extractToDTO;
 @RestController()
 @RequestMapping(path = "api/v1/follow")
 @CrossOrigin(origins = "*")
-@Tag(name = "User Follow Controller", description = "Include method to manage user's follow")
+@Tag(name = "Follow Controller", description = "Include method to manage user's follow")
 @RequiredArgsConstructor
 public class FollowController {
 

@@ -40,11 +40,4 @@ public class ChatController {
             throw new RuntimeException("Failed to send message");
         }
     }
-
-    @DeleteMapping("/delete")
-    public void delete(@Valid @RequestBody MessageEdit message) {
-        User currentUser = userService.getCurrentUser();
-        messageService.deleteMessage(currentUser, message.getMessageId());
-    }
-
 }

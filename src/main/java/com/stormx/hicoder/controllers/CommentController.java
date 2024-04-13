@@ -32,7 +32,7 @@ import static com.stormx.hicoder.common.Utils.extractToDTO;
 @RestController()
 @RequestMapping(path = "api/v1/post/{postId}/comment")
 @CrossOrigin(origins = "*")
-@Tag(name = "User Comment Controller", description = "Include method to manage user's comment")
+@Tag(name = "Comment Controller", description = "Include method to manage user's comment")
 @RequiredArgsConstructor
 public class CommentController {
     private final UserService userService;
