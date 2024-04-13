@@ -7,6 +7,7 @@ import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.MessageRepository;
 import com.stormx.hicoder.services.MessageService;
+import com.stormx.hicoder.services.NotificationService;
 import com.stormx.hicoder.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @Override
     public void saveMessage(MessageDTO message) {
@@ -32,6 +34,7 @@ public class MessageServiceImpl implements MessageService {
         newMessage.setReceiver(receiver);
         newMessage.setSendAt(Timestamp.valueOf(LocalDateTime.now()));
         newMessage.setEditedAt(Timestamp.valueOf(LocalDateTime.now()));
+        notificationService.newMessageNotification(currentUser, receiver, newMessage);
         messageRepository.save(newMessage);
     }
 

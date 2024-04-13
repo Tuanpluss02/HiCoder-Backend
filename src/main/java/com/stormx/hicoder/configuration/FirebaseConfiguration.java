@@ -18,7 +18,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 public class FirebaseConfiguration {
 
     private final FirebaseProperties firebaseProperties;
-
+    private FirebaseApp firebaseApp; // Add this line
     public FirebaseConfiguration(FirebaseProperties firebaseProperties) {
         this.firebaseProperties = firebaseProperties;
     }
@@ -42,10 +42,13 @@ public class FirebaseConfiguration {
 
     @Bean
     FirebaseApp firebaseApp(GoogleCredentials credentials) {
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(credentials)
-                .build();
-        return FirebaseApp.initializeApp(options);
+        if (firebaseApp == null) { // Add this check
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(credentials)
+                    .build();
+            firebaseApp = FirebaseApp.initializeApp(options);
+        }
+        return firebaseApp;
     }
 
     @Bean

@@ -44,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/ui",
                 "/favicon",
                 "/index.html",
+                "/files",
                 "/api/v1/auth/",
                 "/h2-console/",
                 "/h2-console",

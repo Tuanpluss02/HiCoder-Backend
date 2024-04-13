@@ -35,6 +35,8 @@ public class Post {
     @JsonIgnore
     private User author;
 
+    private String mediaUrl;
+
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
@@ -61,6 +63,7 @@ public class Post {
     public Post(PostRequest post) {
         this.title = post.getTitle();
         this.content = post.getContent();
+        this.mediaUrl = post.getMediaUrl();
     }
 
     public boolean isPostedBy(User user) {
