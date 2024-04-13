@@ -20,6 +20,15 @@ public class MessageElasticServiceImpl implements MessageElasticService {
     }
 
     @Override
+    public  List<MessageElastic> searchMessages(String sender, String content) {
+        return messageRepository.findBySenderAndAndContent(sender, content);
+    }
+    @Override
+    public List<MessageElastic> searchMessages(String sender, String receiver, String content) {
+        return messageRepository.findBySenderAndReceiverAndContent(sender, receiver, content);
+    }
+
+    @Override
     public void addMessage(MessageDTO message) {
         MessageElastic messageElastic = MessageElastic.fromMessageDTO(message);
         messageRepository.save(messageElastic);

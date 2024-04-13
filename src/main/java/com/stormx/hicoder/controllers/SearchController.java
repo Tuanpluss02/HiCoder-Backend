@@ -7,15 +7,15 @@ import com.stormx.hicoder.elastic.entities.MessageElastic;
 import com.stormx.hicoder.elastic.entities.PostElastic;
 import com.stormx.hicoder.elastic.services.MessageElasticService;
 import com.stormx.hicoder.elastic.services.PostElasticService;
+import com.stormx.hicoder.entities.User;
+import com.stormx.hicoder.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +26,7 @@ import java.util.List;
 public class SearchController {
     private final PostElasticService postElasticService;
     private final MessageElasticService messageElasticService;
+    private final UserService userService;
 
     @GetMapping("/posts")
     public ResponseEntity<?> searchPosts(@RequestParam String keyword, HttpServletRequest request) {
@@ -34,9 +35,35 @@ public class SearchController {
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search posts successfully", request.getRequestURI(), searchPosts));
     }
 
-    @GetMapping("/messages")
+    @GetMapping("/messages/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> searchMessages(@RequestParam String keyword, HttpServletRequest request) {
         List<MessageElastic> searchElastic =  messageElasticService.searchMessages(keyword);
+        List<MessageDTO> searchMessages = searchElastic.stream().map(MessageDTO::fromMessageElastic).toList();
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search messages successfully", request.getRequestURI(), searchMessages));
+    }
+
+    @GetMapping("/messages")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> searchMessagesAdmin(@RequestParam String sender, @RequestParam String content, HttpServletRequest request) {
+        List<MessageElastic> searchElastic =  messageElasticService.searchMessages(sender, content);
+        List<MessageDTO> searchMessages = searchElastic.stream().map(MessageDTO::fromMessageElastic).toList();
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search messages successfully", request.getRequestURI(), searchMessages));
+    }
+
+    @GetMapping("/messages")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> searchMessagesAdmin(@RequestParam String sender, @RequestParam String receiver, @RequestParam String content, HttpServletRequest request) {
+        List<MessageElastic> searchElastic =  messageElasticService.searchMessages(sender, receiver, content);
+        List<MessageDTO> searchMessages = searchElastic.stream().map(MessageDTO::fromMessageElastic).toList();
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search messages successfully", request.getRequestURI(), searchMessages));
+    }
+
+    @GetMapping("/messages")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> searchMessagesCurrentUser(@RequestParam String receiver, @RequestParam String content, HttpServletRequest request) {
+        User currentUser = userService.getCurrentUser();
+        List<MessageElastic> searchElastic =  messageElasticService.searchMessages(currentUser.getId(), receiver, content);
         List<MessageDTO> searchMessages = searchElastic.stream().map(MessageDTO::fromMessageElastic).toList();
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search messages successfully", request.getRequestURI(), searchMessages));
     }

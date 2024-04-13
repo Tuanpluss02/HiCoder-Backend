@@ -7,6 +7,11 @@ import java.util.List;
 
 public interface MessageElasticService {
     List<MessageElastic> searchMessages(String keyword);
+
+    List<MessageElastic> searchMessages(String sender, String content);
+
+    List<MessageElastic> searchMessages(String sender, String receiver, String content);
+
     void addMessage(MessageDTO message);
     void deleteMessage(String messageId);
 }
