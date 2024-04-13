@@ -2,15 +2,13 @@ package com.stormx.hicoder.elastic.entities;
 
 
 import com.stormx.hicoder.dto.MessageDTO;
-import com.stormx.hicoder.entities.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-
-import java.sql.Timestamp;
 
 @Data
 @Document(indexName = "messages")
@@ -25,12 +23,8 @@ public class MessageElastic {
     private String sendAt;
     private String updatedAt;
 
-    public MessageElastic(MessageDTO messageDTO) {
-        this.id = messageDTO.getId();
-        this.content = messageDTO.getContent();
-        this.sender = messageDTO.getSender();
-        this.receiver = messageDTO.getReceiver();
-        this.sendAt = messageDTO.getSendAt();
-        this.updatedAt = messageDTO.getUpdatedAt();
+    public static MessageElastic fromMessageDTO(MessageDTO messageDTO) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(messageDTO, MessageElastic.class);
     }
 }

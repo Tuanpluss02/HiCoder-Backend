@@ -6,7 +6,6 @@ import com.stormx.hicoder.common.ResponseGeneral;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.helpers.PostRequest;
 import com.stormx.hicoder.dto.PostDTO;
-import com.stormx.hicoder.elastic.entities.PostElastic;
 import com.stormx.hicoder.elastic.services.PostElasticService;
 import com.stormx.hicoder.entities.Post;
 import com.stormx.hicoder.entities.User;

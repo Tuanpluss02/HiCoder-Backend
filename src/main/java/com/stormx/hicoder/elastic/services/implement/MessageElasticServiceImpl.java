@@ -21,7 +21,7 @@ public class MessageElasticServiceImpl implements MessageElasticService {
 
     @Override
     public void addMessage(MessageDTO message) {
-        MessageElastic messageElastic = new MessageElastic(message);
+        MessageElastic messageElastic = MessageElastic.fromMessageDTO(message);
         messageRepository.save(messageElastic);
     }
 

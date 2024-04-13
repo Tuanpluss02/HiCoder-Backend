@@ -2,6 +2,7 @@ package com.stormx.hicoder.elastic.entities;
 import com.stormx.hicoder.dto.PostDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -24,14 +25,8 @@ public class PostElastic {
     private long likesCount;
     private long commentsCount;
 
-    public PostElastic(PostDTO post) {
-        this.id = post.getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.mediaUrl = post.getMediaUrl();
-        this.author = post.getAuthor();
-        this.createdAt = post.getCreatedAt();
-        this.likesCount = post.getLikesCount();
-        this.commentsCount = post.getCommentsCount();
+    public static PostElastic fromPostDTO(PostDTO post) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(post, PostElastic.class);
     }
 }
