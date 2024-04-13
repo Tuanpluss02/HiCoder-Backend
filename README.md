@@ -32,6 +32,10 @@ Here are some of the available endpoints:
 - `/api/v1/auth` - Manages user-related operations, such as registration, login, and retrieving user information.
 - `/api/v1/chat` - Handles messaging functionalities, allowing users to send and receive messages.
 - `/api/v1/post` - Manages post-related operations, enabling users to create, edit, and delete posts.
+- `/api/v1/{post}/comment` - Provides functionalities for commenting on posts.
+- `/api/v1/{post}/like` - Handles post liking functionalities.
+- `/api/v1/media` - Manages media files, such as images and videos.
+- `/api/v1/user` - Provides user-related functionalities, such as updating user information and retrieving user details.
 
 Please refer to the source code and API documentation for more detailed information on the available endpoints and their
 usage.
