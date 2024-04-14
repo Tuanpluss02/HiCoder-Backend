@@ -29,4 +29,9 @@ public class RedisServiceImpl implements RedisService {
     public void deleteRefreshToken(String token) {
         redisTemplate.delete(token);
     }
+
+    @Override
+    public String getEmailByToken(String token) {
+        return (String) redisTemplate.opsForValue().get(token);
+    }
 }
