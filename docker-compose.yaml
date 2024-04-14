@@ -36,11 +36,15 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
     ports:
       - "9200:9200"
       - "9300:9300"
     volumes:
       - esdata:/usr/share/elasticsearch/data
+    networks:
+      - hicoder-network
 
   kibana-hicoder:
     image: docker.elastic.co/kibana/kibana:sha256-de457abb7ac4ea49bd2b2cf25f9247821fba113a8a12e463d898a1b1089a6379
@@ -51,13 +55,15 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch-hicoder
+    networks:
+      - hicoder-network
 
 
   hicoder-backend:
     restart: always
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: hicoder-backend
     networks:
       - hicoder-network
