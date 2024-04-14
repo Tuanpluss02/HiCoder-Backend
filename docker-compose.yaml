@@ -17,8 +17,8 @@ services:
       retries: 100
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+    # ports:
+    #   - '5432:5432'
 
   redis-hicoder:
     image: 'redis:latest'
@@ -27,8 +27,8 @@ services:
     container_name: redis-hicoder
     volumes:
       - redis-data:/data
-    ports:
-      - '6379:6379'
+    # ports:
+    #   - '6379:6379'
 
   elasticsearch-hicoder:
     image: docker.elastic.co/elasticsearch/elasticsearch:sha256-fcf6b29cb00f1db56921e6cb47b506e6a207fcaeae777765dfa733dc007513a6
@@ -41,6 +41,8 @@ services:
       - "9300:9300"
     volumes:
       - esdata:/usr/share/elasticsearch/data
+    networks:
+      - hicoder-network
 
   kibana-hicoder:
     image: docker.elastic.co/kibana/kibana:sha256-de457abb7ac4ea49bd2b2cf25f9247821fba113a8a12e463d898a1b1089a6379
@@ -51,13 +53,15 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch-hicoder
+    networks:
+      - hicoder-network
 
 
   hicoder-backend:
     restart: always
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: hicoder-backend
     networks:
       - hicoder-network
