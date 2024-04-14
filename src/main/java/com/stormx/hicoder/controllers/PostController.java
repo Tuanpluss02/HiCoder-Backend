@@ -46,7 +46,7 @@ public class PostController {
                                                  @RequestParam(defaultValue = "createdAt,desc") String[] sort,
                                                  HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        PageRequest pageRequest = calculatePageable(page, size, sort, PostDTO.class, request);
+        PageRequest pageRequest = calculatePageable(page, size, sort, PostDTO.class);
         Page<Post> userPosts = postService.getAllPostsOfUser(currentUser, pageRequest);
         Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(userPosts, PostDTO::fromPost);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user's posts successfully", request.getRequestURI(), response.getLeft(), response.getRight()));
@@ -58,7 +58,7 @@ public class PostController {
                                                           @RequestParam(defaultValue = "createdAt,desc") String[] sort,
                                                           HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
-        PageRequest pageRequest = calculatePageable(page, size, sort, PostDTO.class, request);
+        PageRequest pageRequest = calculatePageable(page, size, sort, PostDTO.class);
         Page<Post> postNewsFeed = postService.getPostNewsFeed(currentUser, pageRequest);
         Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(postNewsFeed, PostDTO::fromPost);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get post newsfeed successfully",

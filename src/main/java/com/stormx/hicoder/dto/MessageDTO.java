@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 
 @Setter
 @Getter
@@ -28,6 +29,13 @@ public class MessageDTO {
 
     public static MessageDTO fromMessage(Message message) {
         ModelMapper modelMapper = new ModelMapper();
+        modelMapper.addMappings(new PropertyMap<Message, MessageDTO>() {
+            @Override
+            protected void configure() {
+                map().setReceiver(source.getReceiver().getId());
+                map().setSender(source.getSender().getId());
+            }
+        });
         return modelMapper.map(message, MessageDTO.class);
     }
 

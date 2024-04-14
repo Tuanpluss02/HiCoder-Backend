@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 
 @Data
 @AllArgsConstructor
@@ -23,6 +24,12 @@ public class PostDTO {
 
     public static PostDTO fromPost(Post post) {
         ModelMapper modelMapper = new ModelMapper();
+        modelMapper.addMappings(new PropertyMap<Post, PostDTO>() {
+            @Override
+            protected void configure() {
+                map().setAuthor(source.getAuthor().getId());
+            }
+        });
         return modelMapper.map(post, PostDTO.class);
     }
     public static PostDTO fromPostElastic(PostElastic postElastic) {

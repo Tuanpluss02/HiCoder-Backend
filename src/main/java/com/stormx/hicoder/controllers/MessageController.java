@@ -42,7 +42,7 @@ public class MessageController {
                                                        HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         User receiver = userService.loadUserByUsername(receiverUsername);
-        PageRequest pageRequest = calculatePageable(page, size, sort, MessageDTO.class, request);
+        PageRequest pageRequest = calculatePageable(page, size, sort, MessageDTO.class);
         Page<Message> messages = messageService.getMessages(currentUser, receiver, pageRequest);
         Pair<PaginationInfo, List<MessageDTO>> response = extractToDTO(messages, MessageDTO::fromMessage);
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK,"Get messages successfully", request.getRequestURI(), response.getLeft(),response.getRight()));
