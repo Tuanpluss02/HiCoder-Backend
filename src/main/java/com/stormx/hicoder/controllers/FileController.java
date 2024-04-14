@@ -32,7 +32,6 @@ public class FileController {
 
     @PostMapping(value = "/api/v1/media/upload", consumes = "multipart/form-data")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-        String message = "";
         try {
             FileDB savedFile = storageService.store(file);
             String fileDownloadUri = SERVER_ADDRESS + "/files/" + savedFile.getId();
@@ -51,12 +50,7 @@ public class FileController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ResponseFile>> getListFiles() {
         List<ResponseFile> files = storageService.getAllFiles().map(dbFile -> {
-            String fileDownloadUri = ServletUriComponentsBuilder
-                    .fromCurrentContextPath()
-                    .path("/files/")
-                    .path(dbFile.getId())
-                    .toUriString();
-
+            String fileDownloadUri = SERVER_ADDRESS + "/files/" + dbFile.getId();
             return new ResponseFile(
                     dbFile.getName(),
                     fileDownloadUri,
