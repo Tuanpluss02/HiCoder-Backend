@@ -7,6 +7,7 @@ import com.stormx.hicoder.services.FileStorageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,20 +27,21 @@ public class FileController {
 
     private final FileStorageService storageService;
 
+    @Value("${domain.server}")
+    private String SERVER_ADDRESS;
+
     @PostMapping(value = "/api/v1/media/upload", consumes = "multipart/form-data")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         String message = "";
         try {
             FileDB savedFile = storageService.store(file);
+            String fileDownloadUri = SERVER_ADDRESS + "/files/" + savedFile.getId();
             return ResponseEntity.status(HttpStatus.OK).body(
                     new SuccessResponse(HttpStatus.OK,
                             "File uploaded successfully",
                             request.getRequestURI(),
-                             ServletUriComponentsBuilder
-                                    .fromCurrentContextPath()
-                                    .path("/files/")
-                                    .path(savedFile.getId())
-                                    .toUriString()));
+                            fileDownloadUri
+                    ));
         } catch (Exception e) {
             throw  new RuntimeException("Could not upload the file: " + file.getOriginalFilename() + "!");
         }

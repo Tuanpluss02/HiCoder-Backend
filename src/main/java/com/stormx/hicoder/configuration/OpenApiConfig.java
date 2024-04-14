@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 ),
                 @Server(
                         description = "Production server",
-                        url = "http://134.209.103.98:80"
+                        url = "http://188.166.231.77:80"
                 )
         },
         security = {
