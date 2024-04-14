@@ -36,11 +36,15 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
     ports:
       - "9200:9200"
       - "9300:9300"
     volumes:
       - esdata:/usr/share/elasticsearch/data
+    networks:
+      - hicoder-network
 
   kibana-hicoder:
     image: docker.elastic.co/kibana/kibana:sha256-de457abb7ac4ea49bd2b2cf25f9247821fba113a8a12e463d898a1b1089a6379
@@ -51,13 +55,34 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch-hicoder
+    networks:
+      - hicoder-network
+
+  logstash-hicoder:
+    image: docker.elastic.co/logstash/logstash:8.3.3
+    container_name: logstash-hicoder
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - hicoder-network
+    depends_on:
+      - elasticsearch-hicoder
+      - kibana-hicoder
 
 
   hicoder-backend:
     restart: always
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: hicoder-backend
     networks:
       - hicoder-network
@@ -66,6 +91,7 @@ services:
       - redis-hicoder
       - elasticsearch-hicoder
       - kibana-hicoder
+      - logstash-hicoder
 
 
   nginx:

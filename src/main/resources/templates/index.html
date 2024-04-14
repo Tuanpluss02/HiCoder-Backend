@@ -111,7 +111,7 @@
 
     $("#login-form").submit((e) => {
         e.preventDefault();
-        fetch("http://localhost:8080/api/v1/auth/login", {
+        fetch("http://api.stormx.space/api/v1/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -135,7 +135,7 @@
 
     let stompClient = null;
     $("#connect").click(() => {
-        const socket = new SockJS("http://localhost:8080/ws");
+        const socket = new SockJS("http://api.stormx.space/ws");
         stompClient = Stomp.over(socket);
         stompClient.connect(
             {Authorization: `Bearer ${getItem("token")}`},
