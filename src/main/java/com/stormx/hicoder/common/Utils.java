@@ -21,7 +21,7 @@ public class Utils {
         }
     }
 
-    public static PageRequest calculatePageable(int page, int size, String[] sort, Class<?> clazz, HttpServletRequest request) {
+    public static PageRequest calculatePageable(int page, int size, String[] sort, Class<?> clazz) {
         String sortField = sort[0];
         String sortDirection = sort[1];
         if (!isValidSortField(sortField, clazz)) {

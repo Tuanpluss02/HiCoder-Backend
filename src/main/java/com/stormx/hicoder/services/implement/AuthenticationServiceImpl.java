@@ -3,7 +3,6 @@ package com.stormx.hicoder.services.implement;
 import com.stormx.hicoder.common.Role;
 import com.stormx.hicoder.controllers.helpers.AuthenticationRequest;
 import com.stormx.hicoder.controllers.helpers.AuthenticationResponse;
-import com.stormx.hicoder.controllers.helpers.ResetPasswordRequest;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
@@ -12,6 +11,7 @@ import com.stormx.hicoder.services.AuthenticationService;
 import com.stormx.hicoder.services.EmailService;
 import com.stormx.hicoder.services.RedisService;
 import com.stormx.hicoder.services.TokenService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private String ADMIN_KEY;
     @Value("${token.reset-password.expiration}")
     private Long RESETPWD_TOKEN_EXPIRATION;
-
+    @Value("${domain.server}")
+    private String SERVER_ADDRESS;
     @Override
     public AuthenticationResponse register(AuthenticationRequest request) {
         String email = request.getEmail();
@@ -94,11 +95,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void sendEmailResetPassword(ResetPasswordRequest resetPasswordRequest) {
+    public void sendEmailResetPassword(String email) throws MessagingException {
+        boolean isValid = email.matches("^(.+)@(.+)$");
+        if (!isValid) throw new BadRequestException("Invalid email");
+        repository.findByEmail(email).orElseThrow(() -> new BadRequestException("This email is not registered"));
         Context context = new Context();
         String token = tokenService.generateResetPasswordToken();
-        context.setVariable("reset-link", "http://localhost:3000/reset-password?token=" + token);
-        redisService.saveToken(token, RESETPWD_TOKEN_EXPIRATION, resetPasswordRequest.getEmail());
-        emailService.sendEmailWithHtml(resetPasswordRequest.getEmail(), "HiCoder | Reset password", "email-template", context);
+        String resetLink = SERVER_ADDRESS + "/api/v1/auth/reset?token=" + token;
+        context.setVariable("resetPasswordLink", resetLink);
+        redisService.saveToken(token, RESETPWD_TOKEN_EXPIRATION, email);
+        emailService.sendEmailWithHtml(email, "HiCoder | Reset password" + resetLink, "email-template", context);
+    }
+
+    @Override
+    public void verifyAndChangePwd(String token, String newPassword) {
+        String email = redisService.getEmailByToken(token);
+        if (email == null) throw new BadRequestException("Token is invalid or expired");
+        User user = repository.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        repository.save(user);
     }
 }

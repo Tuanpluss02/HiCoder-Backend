@@ -3,10 +3,11 @@ package com.stormx.hicoder.controllers;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.controllers.helpers.AuthenticationRequest;
 import com.stormx.hicoder.controllers.helpers.AuthenticationResponse;
-import com.stormx.hicoder.controllers.helpers.ResetPasswordRequest;
+import com.stormx.hicoder.controllers.helpers.NewPasswordRequest;
 import com.stormx.hicoder.services.AuthenticationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -37,17 +38,17 @@ public class AuthenticationController {
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Register successfully", request.getRequestURI(), authenticationResponse));
     }
 
-    @PostMapping("/send-mail-rsp")
-    public ResponseEntity<?> sendEmailResetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest, HttpServletRequest request) {
-        authenticationService.sendEmailResetPassword(resetPasswordRequest);
-        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Send email reset password successfully", request.getRequestURI(), null));
-    }
-
     @PostMapping("/reset-password")
-    public String verifyAndChangePwd(@RequestParam("token") String token) {
-        return token;
+    public ResponseEntity<?> requesdSendEmail(@RequestParam("email") String email, HttpServletRequest request) throws MessagingException {
+        authenticationService.sendEmailResetPassword(email);
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Reset password email sent successfully", request.getRequestURI(), null));
     }
 
+    @PostMapping("/reset")
+    public ResponseEntity<?>  verifyAndChangePwd(@RequestParam("token") String token, @Valid @RequestBody NewPasswordRequest newPassword) {
+         authenticationService.verifyAndChangePwd(token, newPassword.getPassword());
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Reset password successfully", null, null));
+    }
 
     @GetMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(
