@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import java.util.Arrays;
-
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
