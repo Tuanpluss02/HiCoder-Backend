@@ -93,7 +93,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> getPostNewsFeed(User currentUser, PageRequest pageRequest) {
         List<User> followings = followService.getAllFollowings(currentUser, PageRequest.of(0, 100)).getContent();
-        return postRepository.findAllByAuthorInOrderByCreatedAtDesc(followings, pageRequest);
+        Page<Post> newFeeds;
+        newFeeds =  postRepository.findAllByAuthorInOrderByCreatedAtDesc(followings, pageRequest);
+        if (newFeeds.isEmpty()) {
+            newFeeds = postRepository.findAllByAuthor(currentUser, pageRequest);
+        }
+        if (newFeeds.isEmpty()) {
+            newFeeds = postRepository.findAll(pageRequest);
+        }
+        return newFeeds;
     }
 
 }

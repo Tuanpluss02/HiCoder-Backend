@@ -35,6 +35,6 @@ public class Token {
         this.user = user;
         this.token = deviceToken;
         this.type = type;
-        this.active = false;
+        this.active = type == TokenType.DEVICE_TOKEN;
     }
 }

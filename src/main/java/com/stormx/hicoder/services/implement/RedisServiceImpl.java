@@ -1,6 +1,5 @@
 package com.stormx.hicoder.services.implement;
 
-import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.services.RedisService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -21,12 +20,13 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public UserDTO getUserFromRefreshToken(String token) {
-        return (UserDTO) redisTemplate.opsForValue().get(token);
+    public Object getObjByToken(String token) {
+        return redisTemplate.opsForValue().get(token);
     }
 
+
     @Override
-    public void deleteRefreshToken(String token) {
+    public void deleteToken(String token) {
         redisTemplate.delete(token);
     }
 

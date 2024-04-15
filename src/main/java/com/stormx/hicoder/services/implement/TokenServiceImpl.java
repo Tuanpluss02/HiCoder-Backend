@@ -6,7 +6,6 @@ import com.stormx.hicoder.common.TokenType;
 import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.Token;
 import com.stormx.hicoder.entities.User;
-import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.TokenRepository;
 import com.stormx.hicoder.services.RedisService;
 import com.stormx.hicoder.services.TokenService;
@@ -44,22 +43,25 @@ public class TokenServiceImpl implements TokenService {
     public String generateRefreshToken(UserDTO user, Collection<SimpleGrantedAuthority> authorities) {
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
         String refreshToken = JWT.create().withSubject(user.getUsername()).withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION)).sign(algorithm);
-        saveRefreshToken(refreshToken, user);
+        redisService.saveToken(refreshToken, REFRESH_TOKEN_EXPIRATION, user.getId());
         return refreshToken;
     }
 
     @Override
-    public void saveRefreshToken(String token, UserDTO userDetails) {
-        redisService.saveToken(token, REFRESH_TOKEN_EXPIRATION, userDetails);
+    public boolean isValidToken(String refreshToken) {
+        return redisService.getObjByToken(refreshToken) != null;
     }
-
 
     @Override
-    public UserDTO isRefreshTokenValid(String refreshToken) {
-        UserDTO user = redisService.getUserFromRefreshToken(refreshToken);
-        if (user == null) throw new BadRequestException("Refresh token is not valid or expired");
-        return user;
+    public void blacklistToken(User user, String token) {
+        tokenRepository.save(new Token(user, token, TokenType.USER_TOKEN));
     }
+
+    @Override
+    public boolean isValidAccessToken(User user, String accessToken) {
+        return tokenRepository.existsByUserAndTokenAndType(user, accessToken, TokenType.USER_TOKEN);
+    }
+
 
     @Override
     public String generateResetPasswordToken() {

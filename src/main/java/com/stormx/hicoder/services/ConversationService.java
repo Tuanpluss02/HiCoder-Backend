@@ -1,7 +1,6 @@
 package com.stormx.hicoder.services;
 
 import com.stormx.hicoder.dto.ConversationDTO;
-import com.stormx.hicoder.entities.Conversation;
 import com.stormx.hicoder.entities.User;
 
 import java.util.List;

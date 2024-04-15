@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface TokenRepository extends JpaRepository<Token, Long> {
     List<Token> findAllByUserAndType(User user, TokenType type);
-
+    boolean existsByUserAndTokenAndType(User user, String accessToken, TokenType tokenType);
 }
