@@ -23,12 +23,12 @@ public class Message {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "sender_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User sender;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
     @JoinColumn(name = "receiver_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User receiver;
@@ -42,6 +42,12 @@ public class Message {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "edited_at")
     private Timestamp editedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Setter
+    @JoinColumn(name = "conversation_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Conversation conversation;
 
     public boolean isSendBy(User user) {
         return sender.getId().equals(user.getId());

@@ -18,6 +18,7 @@ public class MessageDTO {
     private String sender;
     private String content;
     private String receiver;
+    private String conversation;
     private String sendAt;
     private String updatedAt;
 
@@ -34,6 +35,7 @@ public class MessageDTO {
             protected void configure() {
                 map().setReceiver(source.getReceiver().getId());
                 map().setSender(source.getSender().getId());
+                map().setConversation(source.getConversation().getId());
             }
         });
         return modelMapper.map(message, MessageDTO.class);
