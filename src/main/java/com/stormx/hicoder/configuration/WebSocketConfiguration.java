@@ -3,10 +3,13 @@ package com.stormx.hicoder.configuration;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.UserRepository;
+import com.stormx.hicoder.services.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -34,9 +37,11 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
 
     private final UserRepository userRepository;
+    private final TokenService tokenService;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
+
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -54,7 +59,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {
             @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
+            public Message<?> preSend(@NotNull Message<?> message, @NotNull MessageChannel channel) {
                 StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 log.info("Headers: {}", accessor);
@@ -65,7 +70,10 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                     log.info("Authorization: {}", authorizationHeader);
                     DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey.getBytes())).build().verify(authorizationHeader.substring("Bearer ".length()));
                     String username = decodedJWT.getSubject();
-                    var userDetails = userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));
+                    User userDetails = userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));
+                    if (tokenService.isValidAccessToken(userDetails, authorizationHeader.substring("Bearer ".length()))) {
+                        throw new BadRequestException("Token is blacklisted");
+                    }
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                     accessor.setUser(usernamePasswordAuthenticationToken);

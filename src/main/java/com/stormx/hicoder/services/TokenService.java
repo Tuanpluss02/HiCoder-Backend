@@ -13,9 +13,11 @@ public interface TokenService {
 
     String generateRefreshToken(UserDTO user, Collection<SimpleGrantedAuthority> authorities);
 
-    void saveRefreshToken(String token, UserDTO userDetails);
+    boolean isValidToken(String refreshToken);
 
-    UserDTO isRefreshTokenValid(String refreshToken);
+    void blacklistToken(User user, String token);
+
+    boolean isValidAccessToken(User user,String accessToken);
 
     String generateResetPasswordToken();
 
@@ -24,5 +26,4 @@ public interface TokenService {
     List<Token> getAllDeviceTokens(User user);
 
     void disableDeviceToken(User user, String deviceToken);
-
 }

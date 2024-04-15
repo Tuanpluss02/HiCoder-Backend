@@ -9,7 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface AuthenticationService {
      AuthenticationResponse register(AuthenticationRequest request);
      AuthenticationResponse authenticate(AuthenticationRequest request);
-     AuthenticationResponse getNewAccessToken(HttpServletRequest request, HttpServletResponse response);
+    AuthenticationResponse getNewAccessToken(HttpServletRequest request);
     void sendEmailResetPassword(String email) throws MessagingException;
     void verifyAndChangePwd(String token, String newPassword);
+    void logout(HttpServletRequest request);
 }

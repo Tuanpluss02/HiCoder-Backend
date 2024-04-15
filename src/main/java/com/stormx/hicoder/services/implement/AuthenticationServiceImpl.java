@@ -7,13 +7,9 @@ import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
 import com.stormx.hicoder.repositories.UserRepository;
-import com.stormx.hicoder.services.AuthenticationService;
-import com.stormx.hicoder.services.EmailService;
-import com.stormx.hicoder.services.RedisService;
-import com.stormx.hicoder.services.TokenService;
+import com.stormx.hicoder.services.*;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +27,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository repository;
+    private final UserService userService;
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -74,6 +71,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return getAuthenticationResponse(user, authorities);
     }
 
+    @Override
+    public AuthenticationResponse getNewAccessToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new BadRequestException("Refresh token is missing");
+        }
+        String refreshToken = authorizationHeader.substring("Bearer ".length());
+        if (!tokenService.isValidToken(refreshToken)) throw new BadRequestException("Refresh token is invalid");
+        String userId = (String) redisService.getObjByToken(refreshToken);
+        User user = userService.getUserById(userId);
+        Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
+        String jwtToken = tokenService.generateToken(UserDTO.fromUser(user), authorities);
+        return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).role(user.getRole().toString()).accessToken(jwtToken).refreshToken(refreshToken).build();
+    }
+
     private AuthenticationResponse getAuthenticationResponse(User user, Collection<SimpleGrantedAuthority> authorities) {
         UserDTO userDTO = UserDTO.fromUser(user);
         String jwtToken = tokenService.generateToken(userDTO, authorities);
@@ -81,18 +93,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).role(user.getRole().toString()).accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
-    @Override
-    public AuthenticationResponse getNewAccessToken(HttpServletRequest request, HttpServletResponse response) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new BadRequestException("Refresh token is missing");
-        }
-        String refreshToken = authorizationHeader.substring("Bearer ".length());
-        UserDTO user = tokenService.isRefreshTokenValid(refreshToken);
-        Collection<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
-        String jwtToken = tokenService.generateToken(user, authorities);
-        return AuthenticationResponse.builder().userId(user.getId()).username(user.getUsername()).role(user.getRole().toString()).accessToken(jwtToken).refreshToken(refreshToken).build();
-    }
 
     @Override
     public void sendEmailResetPassword(String email) throws MessagingException {
@@ -115,5 +115,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(passwordEncoder.encode(newPassword));
         redisService.deleteToken(token);
         repository.save(user);
+    }
+
+    @Override
+    public void logout(HttpServletRequest request) {
+        User user = userService.getCurrentUser();
+        redisService.deleteToken(user.getId());
+        tokenService.disableDeviceToken(user, null);
+        tokenService.blacklistToken(user, request.getHeader(AUTHORIZATION).substring("Bearer ".length()));
     }
 }

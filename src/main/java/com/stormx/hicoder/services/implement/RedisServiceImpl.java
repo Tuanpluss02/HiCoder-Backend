@@ -21,9 +21,10 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public UserDTO getUserFromRefreshToken(String token) {
-        return (UserDTO) redisTemplate.opsForValue().get(token);
+    public Object getObjByToken(String token) {
+        return redisTemplate.opsForValue().get(token);
     }
+
 
     @Override
     public void deleteToken(String token) {

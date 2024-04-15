@@ -5,8 +5,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stormx.hicoder.common.ErrorResponse;
+import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
+import com.stormx.hicoder.repositories.TokenRepository;
 import com.stormx.hicoder.repositories.UserRepository;
+import com.stormx.hicoder.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +37,7 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepository;
+    private final TokenService tokenService;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -63,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String servletPath = request.getServletPath();
-        if (isWhiteListed(servletPath)) {
+        if (!servletPath.equals("/api/v1/auth/logout") && isWhiteListed(servletPath)) {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(null, null, null));
             filterChain.doFilter(request, response);
             return;
@@ -75,10 +79,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             new ObjectMapper().writeValue(response.getOutputStream(), new ErrorResponse(UNAUTHORIZED, "Token is required", servletPath));
             return;
         }
+
         try {
             DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey.getBytes())).build().verify(authorizationHeader.substring("Bearer ".length()));
             String username = decodedJWT.getSubject();
-            userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));
+            User user =userRepository.findByUsername(username).orElseThrow(() -> new BadRequestException("Token is invalid"));
+            if (tokenService.isValidAccessToken(user, authorizationHeader.substring("Bearer ".length()))) {
+                throw new BadRequestException("Token is blacklisted");
+            }
             Collection<SimpleGrantedAuthority> authorities = Arrays.stream(decodedJWT.getClaim("roles").asArray(String.class)).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null, authorities));
             response.setContentType(APPLICATION_JSON_VALUE);
