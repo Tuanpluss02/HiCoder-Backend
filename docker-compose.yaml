@@ -77,36 +77,36 @@ services:
       - elasticsearch-hicoder
       - kibana-hicoder
 
-
-  hicoder-backend:
-    restart: always
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: hicoder-backend
-    networks:
-      - hicoder-network
-    depends_on:
-      - postgres-hicoder
-      - redis-hicoder
-      - elasticsearch-hicoder
-      - kibana-hicoder
-      - logstash-hicoder
-
-
-  nginx:
-    image: 'nginx:latest'
-    container_name: nginx-hicoder
-    restart: unless-stopped
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    networks:
-      - hicoder-network
-    depends_on:
-      - hicoder-backend
-    ports:
-      - '80:80'
-      - '443:443'
+#
+#  hicoder-backend:
+#    restart: always
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: hicoder-backend
+#    networks:
+#      - hicoder-network
+#    depends_on:
+#      - postgres-hicoder
+#      - redis-hicoder
+#      - elasticsearch-hicoder
+#      - kibana-hicoder
+#      - logstash-hicoder
+#
+#
+#  nginx:
+#    image: 'nginx:latest'
+#    container_name: nginx-hicoder
+#    restart: unless-stopped
+#    volumes:
+#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+#    networks:
+#      - hicoder-network
+#    depends_on:
+#      - hicoder-backend
+#    ports:
+#      - '80:80'
+#      - '443:443'
 
 volumes:
   postgres-data:

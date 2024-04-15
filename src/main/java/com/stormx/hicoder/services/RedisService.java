@@ -9,7 +9,7 @@ public interface RedisService {
 
     UserDTO getUserFromRefreshToken(String token);
 
-    void deleteRefreshToken(String token);
+    void deleteToken(String token);
 
     String getEmailByToken(String token);
 }

@@ -101,10 +101,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         repository.findByEmail(email).orElseThrow(() -> new BadRequestException("This email is not registered"));
         Context context = new Context();
         String token = tokenService.generateResetPasswordToken();
-        String resetLink = SERVER_ADDRESS + "/api/v1/auth/reset?token=" + token;
+        String resetLink = SERVER_ADDRESS + "/ui/reset-password?token=" + token;
         context.setVariable("resetPasswordLink", resetLink);
         redisService.saveToken(token, RESETPWD_TOKEN_EXPIRATION, email);
-        emailService.sendEmailWithHtml(email, "HiCoder | Reset password" + resetLink, "email-template", context);
+        emailService.sendEmailWithHtml(email, "HiCoder | Reset password", "email-template", context);
     }
 
     @Override
@@ -113,6 +113,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (email == null) throw new BadRequestException("Token is invalid or expired");
         User user = repository.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
         user.setPassword(passwordEncoder.encode(newPassword));
+        redisService.deleteToken(token);
         repository.save(user);
     }
 }

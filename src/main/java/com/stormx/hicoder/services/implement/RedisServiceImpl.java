@@ -26,7 +26,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void deleteRefreshToken(String token) {
+    public void deleteToken(String token) {
         redisTemplate.delete(token);
     }
 
