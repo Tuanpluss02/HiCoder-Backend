@@ -3,6 +3,7 @@ package com.stormx.hicoder.services.implement;
 import com.stormx.hicoder.controllers.helpers.MessageEdit;
 import com.stormx.hicoder.dto.MessageDTO;
 import com.stormx.hicoder.elastic.services.MessageElasticService;
+import com.stormx.hicoder.entities.Conversation;
 import com.stormx.hicoder.entities.Message;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.exceptions.BadRequestException;
@@ -36,6 +37,22 @@ public class MessageServiceImpl implements MessageService {
         newMessage.setReceiver(receiver);
         newMessage.setSendAt(Timestamp.valueOf(LocalDateTime.now()));
         newMessage.setEditedAt(Timestamp.valueOf(LocalDateTime.now()));
+        messageRepository.save(newMessage);
+        notificationService.newMessageNotification(currentUser, receiver, newMessage);
+        messageElasticService.addMessage(message);
+    }
+
+    @Override
+    public void saveMessage(MessageDTO message, Conversation conv) {
+        User currentUser = userService.loadUserByUsername(message.getSender());
+        User receiver = userService.loadUserByUsername(message.getReceiver());
+        Message newMessage = new Message();
+        newMessage.setContent(message.getContent());
+        newMessage.setSender(currentUser);
+        newMessage.setReceiver(receiver);
+        newMessage.setSendAt(Timestamp.valueOf(LocalDateTime.now()));
+        newMessage.setEditedAt(Timestamp.valueOf(LocalDateTime.now()));
+        newMessage.setConversation(conv);
         messageRepository.save(newMessage);
         notificationService.newMessageNotification(currentUser, receiver, newMessage);
         messageElasticService.addMessage(message);

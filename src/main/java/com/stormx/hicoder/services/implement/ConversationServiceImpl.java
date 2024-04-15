@@ -20,11 +20,11 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
-    public void createConversation(User sender, User receiver) {
+    public Conversation createConversation(User sender, User receiver) {
         Conversation conversation = new Conversation();
         conversation.setSender(sender);
         conversation.setReceiver(receiver);
-        conversationRepository.save(conversation);
+       return conversationRepository.save(conversation);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.stormx.hicoder.controllers;
 
 import com.stormx.hicoder.controllers.helpers.MessageSend;
 import com.stormx.hicoder.dto.MessageDTO;
+import com.stormx.hicoder.entities.Conversation;
 import com.stormx.hicoder.entities.User;
 import com.stormx.hicoder.services.ConversationService;
 import com.stormx.hicoder.services.MessageService;
@@ -27,10 +28,10 @@ public class ChatController {
     public void chat(@Payload MessageSend message) {
         try {
             MessageDTO messageDTO = new MessageDTO(message.getSender(), message.getContent(), message.getReceiver());
-            messageService.saveMessage(messageDTO);
             User sender = userService.loadUserByUsername(message.getSender());
             User receiver = userService.loadUserByUsername(message.getReceiver());
-            conversationService.createConversation(sender, receiver);
+            Conversation conv = conversationService.createConversation(sender, receiver);
+            messageService.saveMessage(messageDTO, conv);
             simpMessagingTemplate.convertAndSendToUser(message.getReceiver(), "/topic", message);
         } catch (Exception e) {
             throw new RuntimeException("Failed to send message");

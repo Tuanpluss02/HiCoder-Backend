@@ -20,6 +20,7 @@ public class MessageElastic {
     private String content;
     private String sender;
     private String receiver;
+    private String conversation;
     private String sendAt;
     private String updatedAt;
 
