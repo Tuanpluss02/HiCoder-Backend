@@ -25,9 +25,6 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
-    private String title;
-
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
@@ -64,7 +61,6 @@ public class Post {
     private List<User> likedByUsers = new ArrayList<>();
 
     public Post(PostRequest post) {
-        this.title = post.getTitle();
         this.content = post.getContent();
         this.mediaUrl = post.getMediaUrl();
     }
@@ -97,7 +93,6 @@ public class Post {
 
         return "Post{" +
                 "id='" + id + '\'' +
-                ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", author=" + author.getId() +
                 ", createdAt=" + createdAt +

@@ -16,7 +16,7 @@ public class PostElasticServiceImpl implements PostElasticService {
 
     @Override
     public List<PostElastic> searchPosts(String keyword) {
-        return postRepository.findByTitleOrContent(keyword, keyword);
+        return postRepository.findByContentOrUsername(keyword, keyword);
     }
 
     @Override

@@ -15,7 +15,6 @@ import org.modelmapper.PropertyMap;
 public class PostDTO {
 
     private String id;
-    private String title;
     private String content;
     private UserDTO author;
     private String createdAt;

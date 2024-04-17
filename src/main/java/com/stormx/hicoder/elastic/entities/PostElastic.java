@@ -18,8 +18,6 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 public class PostElastic {
     @Id
     private String id;
-    @Field(type = FieldType.Text, name = "title")
-    private String title;
     @Field(type = FieldType.Text, name = "content")
     private String content;
     @Field(type = FieldType.Text, name = "author")
@@ -36,7 +34,6 @@ public class PostElastic {
     public static PostElastic fromPostDTO(PostDTO post) {
         PostElastic postElastic = new PostElastic();
         postElastic.setId(post.getId());
-        postElastic.setTitle(post.getTitle());
         postElastic.setContent(post.getContent());
         postElastic.setCreatedAt(post.getCreatedAt());
         postElastic.setMediaUrl(post.getMediaUrl());

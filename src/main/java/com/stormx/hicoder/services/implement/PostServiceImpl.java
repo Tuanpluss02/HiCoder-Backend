@@ -73,7 +73,6 @@ public class PostServiceImpl implements PostService {
         if (!userPosts.isPostedBy(currentUser)) {
             throw new BadRequestException("User doesn't have post: " + postId);
         }
-        userPosts.setTitle(postDetails.getTitle());
         userPosts.setContent(postDetails.getContent());
         postRepository.save(userPosts);
         return PostDTO.fromPost(userPosts);
