@@ -103,5 +103,9 @@ public class PostServiceImpl implements PostService {
         }
         return newFeeds;
     }
+    @Override
+    public boolean isPostLikedByUser(Post post, User user) {
+        return post.getLikedByUsers().contains(user);
+    }
 
 }

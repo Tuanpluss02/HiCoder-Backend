@@ -3,6 +3,7 @@ package com.stormx.hicoder.controllers;
 import com.stormx.hicoder.common.SuccessResponse;
 import com.stormx.hicoder.dto.MessageDTO;
 import com.stormx.hicoder.dto.PostDTO;
+import com.stormx.hicoder.dto.UserDTO;
 import com.stormx.hicoder.elastic.entities.MessageElastic;
 import com.stormx.hicoder.elastic.entities.PostElastic;
 import com.stormx.hicoder.elastic.services.MessageElasticService;
@@ -35,6 +36,10 @@ public class SearchController {
     public ResponseEntity<?> searchPosts(@RequestParam String keyword, HttpServletRequest request) {
         List<PostElastic> searchElastic =  postElasticService.searchPosts(keyword);
         List<PostDTO> searchPosts = searchElastic.stream().map(PostDTO::fromPostElastic).toList();
+        for (int i = 0; i < searchPosts.size(); i++) {
+            User user = userService.getUserById(searchElastic.get(i).getAuthor());
+            searchPosts.get(i).setAuthor(UserDTO.fromUser(user));
+        }
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Search posts successfully", request.getRequestURI(), searchPosts));
     }
 

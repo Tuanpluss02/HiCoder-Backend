@@ -49,6 +49,7 @@ public class PostController {
         PageRequest pageRequest = calculatePageable(page, size, sort, PostDTO.class);
         Page<Post> userPosts = postService.getAllPostsOfUser(currentUser, pageRequest);
         Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(userPosts, PostDTO::fromPost);
+        response.getRight().forEach(post -> post.setLiked(postService.isPostLikedByUser(postService.getPostById(post.getId()), currentUser)));
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user's posts successfully", request.getRequestURI(), response.getLeft(), response.getRight()));
     }
 
@@ -61,6 +62,7 @@ public class PostController {
         PageRequest pageRequest = calculatePageable(page, size, sort, PostDTO.class);
         Page<Post> postNewsFeed = postService.getPostNewsFeed(currentUser, pageRequest);
         Pair<PaginationInfo, List<PostDTO>> response = extractToDTO(postNewsFeed, PostDTO::fromPost);
+        response.getRight().forEach(post -> post.setLiked(postService.isPostLikedByUser(postService.getPostById(post.getId()), currentUser)));
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get post newsfeed successfully",
                 request.getRequestURI(), response.getLeft(), response.getRight()));
     }
@@ -70,6 +72,7 @@ public class PostController {
     public ResponseEntity<?> getUserPostById(@PathVariable String postId, HttpServletRequest request) {
         User currentUser = userService.getCurrentUser();
         PostDTO userPosts = postService.getUserPostById(postId, currentUser);
+        userPosts.setLiked(postService.isPostLikedByUser(postService.getPostById(postId), currentUser));
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, "Get user's posts successfully", request.getRequestURI(), userPosts));
     }
 

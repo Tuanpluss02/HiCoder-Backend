@@ -25,4 +25,6 @@ public interface PostService {
     void deletePost(String postId, User currentUser);
 
     Page<Post> getPostNewsFeed(User currentUser, PageRequest pageRequest);
+
+    boolean isPostLikedByUser(Post post, User user);
 }
